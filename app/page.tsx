@@ -12,6 +12,8 @@ import { categories, getProducts } from "@/lib/data"
 export default function HomePage() {
   const { user, isAuthenticated, logout } = useAuth()
 
+
+
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 p-4">

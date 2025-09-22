@@ -1,5 +1,6 @@
 import api from "./api/api"
 import { setAuthToken } from "./common/common"
+import endpoints from "./endpoints/endponts"
 
 export interface User {
   id: string
@@ -84,7 +85,7 @@ export const signup = async (
 ) => {
  
 try {
-   const res = await api.post("api/auth/signup",{name,email,password,number})
+   const res = await api.post(endpoints.auth.signin,{name,email,password,number})
    console.log("Signup response:", res);
 
    if(res.status === 200){
@@ -111,7 +112,7 @@ export const verifyOtp = async (otp: string)=>{
   }
   try {
     const newotp = otp.toString()
-    const res = await api.post("/api/auth/verify-otp", { email, otp:newotp })
+    const res = await api.post(endpoints.auth.verifyOtp, { email, otp:newotp })
     return res 
   } catch (error) {
     console.error("OTP verification error:", error);

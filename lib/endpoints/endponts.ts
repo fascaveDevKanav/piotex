@@ -1,15 +1,13 @@
-import { products } from "../products";
+
 
 const endpoints ={
 
     auth:{
-        login:"auth/login",
-        signup:"auth/signup",
+        signin:"api/auth/admin/signin",
+        signup:"api/auth/signup",
+        verifyOtp:"api/auth/verify-otp"
     },
-    products:{
-        list:products,
-
-    }
+ 
 
 }
 export default endpoints;   
