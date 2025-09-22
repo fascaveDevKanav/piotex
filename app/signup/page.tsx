@@ -10,20 +10,22 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, Mail, Lock, User } from "lucide-react"
+import { Loader2, Mail, Lock, User, Phone } from "lucide-react"
 import { signup } from "@/lib/auth"
 import { useAuth } from "@/hooks/use-auth"
+import { OtpModal } from "@/components/authModal"
 
 export default function SignupPage() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
+  const [number, setNumber] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
   const { login: authLogin } = useAuth()
-
+  const [isOtpModalVisible, setIsOtpModalVisible] = useState<boolean>(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
@@ -44,13 +46,14 @@ export default function SignupPage() {
     }
 
     try {
-      const result = await signup(name, email, password)
-      if (result.success && result.user) {
-        authLogin(result.user)
-        router.push("/")
-      } else {
-        setError(result.error || "Signup failed")
-      }
+      const result = await signup(name, email, password, number)
+       if(result === true){
+        // make true the otp verification model
+        setIsOtpModalVisible(true);
+       }else{
+        setError("Signup failed")
+       }
+   
     } catch (err) {
       setError("An unexpected error occurred")
     } finally {
@@ -104,6 +107,23 @@ export default function SignupPage() {
                 />
               </div>
             </div>
+             <div className="space-y-2">
+              <Label htmlFor="number">Number</Label>
+              <div className="relative">
+                <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <Input
+                  id="number"
+                  type="text"
+                  placeholder="Enter your number"
+                  value={number}
+                  onChange={(e) => setNumber(e.target.value)}
+                  className="pl-10"
+                  required
+                />
+              </div>
+
+              </div>
+            
 
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -159,6 +179,7 @@ export default function SignupPage() {
           </div>
         </CardContent>
       </Card>
+      <OtpModal visible={isOtpModalVisible} onClose={() => setIsOtpModalVisible(false)}  />
     </div>
   )
 }

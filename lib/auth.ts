@@ -1,4 +1,6 @@
-// Authentication utilities for localStorage-based auth
+import api from "./api/api"
+import { setAuthToken } from "./common/common"
+
 export interface User {
   id: string
   name: string
@@ -34,63 +36,92 @@ export const isAuthenticated = (): boolean => {
   return getCurrentUser() !== null
 }
 
-// Login function
-export const login = (email: string, password: string): Promise<{ success: boolean; user?: User; error?: string }> => {
-  return new Promise((resolve) => {
-    // Simulate API call delay
-    setTimeout(() => {
-      // Check if user exists in localStorage (for demo purposes)
-      const existingUsers = JSON.parse(localStorage.getItem("users") || "[]")
-      const user = existingUsers.find((u: any) => u.email === email && u.password === password)
 
-      if (user) {
-        const { password: _, ...userWithoutPassword } = user
-        saveUser(userWithoutPassword)
-        resolve({ success: true, user: userWithoutPassword })
-      } else {
-        resolve({ success: false, error: "Invalid email or password" })
-      }
-    }, 1000)
-  })
+export const saveEmail =(email:string): void=>{
+  localStorage.setItem("email",email)
+}
+export const getEmail =(): string | null=>{
+  return localStorage.getItem("email")
+}
+
+// Clear email from localStorage
+export const clearEmail =(): void=>{
+  localStorage.removeItem("email")
+}
+
+// Login function
+export const login =async (email: string, password: string) => {
+try {
+   const response = await api.post("api/auth/signin",{email,password})
+    console.log("Login response:", response);
+   
+     if(response.status === 200){
+      const user = response.data.user;
+      console.log(user);
+      saveUser(user)
+      setAuthToken(response.data.token)
+      return response
+     }
+    else{
+      console.error("Login failed with status:");
+      return response
+    }
+   
+  
+} catch (err: any) {
+   console.error("Signup error:", err);
+   throw new Error(err.message || "Signup failed");
+}
+
 }
 
 // Signup function
-export const signup = (
+export const signup = async (
   name: string,
   email: string,
   password: string,
-): Promise<{ success: boolean; user?: User; error?: string }> => {
-  return new Promise((resolve) => {
-    // Simulate API call delay
-    setTimeout(() => {
-      // Check if user already exists
-      const existingUsers = JSON.parse(localStorage.getItem("users") || "[]")
-      const userExists = existingUsers.find((u: any) => u.email === email)
+  number: string
+) => {
+ 
+try {
+   const res = await api.post("api/auth/signup",{name,email,password,number})
+   console.log("Signup response:", res);
 
-      if (userExists) {
-        resolve({ success: false, error: "User already exists with this email" })
-        return
-      }
+   if(res.status === 200){
+    saveEmail(email)
+    return true;
+   }else{
+    throw new Error(res.data.message || "Signup failed");
+   }
+   
 
-      // Create new user
-      const newUser: User = {
-        id: Date.now().toString(),
-        name,
-        email,
-        createdAt: new Date().toISOString(),
-      }
+} catch (err: any) {
 
-      // Save to users array (for login validation)
-      const userWithPassword = { ...newUser, password }
-      existingUsers.push(userWithPassword)
-      localStorage.setItem("users", JSON.stringify(existingUsers))
-
-      // Save current user
-      saveUser(newUser)
-      resolve({ success: true, user: newUser })
-    }, 1000)
-  })
+   console.error("Signup error:", err);
+   throw new Error(err.message || "Signup failed");
 }
+}
+
+// Verify OTP function
+
+export const verifyOtp = async (otp: string)=>{
+  const email = getEmail();
+  if(!email){
+    throw new Error("Email not found for OTP verification");
+  }
+  try {
+    const newotp = otp.toString()
+    const res = await api.post("/api/auth/verify-otp", { email, otp:newotp })
+    return res 
+  } catch (error) {
+    console.error("OTP verification error:", error);
+    throw new Error("OTP verification failed");
+    
+  }
+}
+
+
+
 
 // Logout function
 export const logout = (): void => {

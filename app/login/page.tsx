@@ -29,14 +29,15 @@ export default function LoginPage() {
 
     try {
       const result = await login(email, password)
-      if (result.success && result.user) {
-        authLogin(result.user)
+
+      if( result && result.status === 200){
         router.push("/")
-      } else {
-        setError(result.error || "Login failed")
+      }
+      else{
+        setError(result?.data?.message || "Login failed")
       }
     } catch (err) {
-      setError("An unexpected error occurred")
+      setError( "An unexpected error occurred")
     } finally {
       setLoading(false)
     }
