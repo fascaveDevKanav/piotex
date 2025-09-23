@@ -1,44 +1,15 @@
 "use client"
 
-import { useAuth } from "@/hooks/use-auth"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent,  } from "@/components/ui/card"
 import Link from "next/link"
-import { ProductCard } from "@/components/products/product-card"
-import { categories, getProducts } from "@/lib/data"
+
+import { categories } from "@/lib/data"
+import ProductGrid from "@/components/product/productcard"
 
 export default function HomePage() {
-  const { user, isAuthenticated, logout } = useAuth()
-
-
-
-  if (!isAuthenticated) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 p-4">
-        <Card className="w-full max-w-md text-center">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold text-pink-600">Welcome to Ladies Wear</CardTitle>
-            <CardDescription>Your destination for the latest fashion trends</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="flex flex-col gap-3">
-              <Link href="/login">
-                <Button className="w-full bg-pink-600 hover:bg-pink-700">Sign In</Button>
-              </Link>
-              <Link href="/signup">
-                <Button variant="outline" className="w-full bg-transparent">
-                  Create Account
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    )
-  }
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -102,28 +73,10 @@ export default function HomePage() {
               </Button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {getProducts({ limit: 4 }).map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))}
+          <div className="">
+          <ProductGrid/>
           </div>
-        </div>
-
-        {/* Newsletter Signup */}
-        <div className="bg-pink-50 rounded-2xl p-8 text-center">
-          <h2 className="text-2xl font-bold text-gray-900 mb-4">Stay Updated</h2>
-          <p className="text-gray-600 mb-6">
-            Subscribe to get special offers, free giveaways, and updates on new arrivals
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-            <input
-              type="email"
-              placeholder="Enter your email"
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-pink-500"
-            />
-            <Button className="bg-pink-600 hover:bg-pink-700 px-6">Subscribe</Button>
-          </div>
-        </div>
+        </div>      
       </main>
 
       <Footer />

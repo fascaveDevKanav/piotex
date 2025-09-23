@@ -44,6 +44,54 @@ const products: Product[] = [
     image: "https://picsum.photos/400?random=3",
     sizes: ["S", "M", "L", "XL"],
   },
+    {
+    id: "2",
+    name: "Minimalist Backpack",
+    price: 1999,
+    originalPrice: 2499,
+    image: "https://picsum.photos/400?random=2",
+    sizes: ["M", "L"],
+  },
+  {
+    id: "3",
+    name: "Oversized Hoodie",
+    price: 1499,
+    originalPrice: 1899,
+    image: "https://picsum.photos/400?random=3",
+    sizes: ["S", "M", "L", "XL"],
+  },
+    {
+    id: "2",
+    name: "Minimalist Backpack",
+    price: 1999,
+    originalPrice: 2499,
+    image: "https://picsum.photos/400?random=2",
+    sizes: ["M", "L"],
+  },
+  {
+    id: "3",
+    name: "Oversized Hoodie",
+    price: 1499,
+    originalPrice: 1899,
+    image: "https://picsum.photos/400?random=3",
+    sizes: ["S", "M", "L", "XL"],
+  },
+    {
+    id: "2",
+    name: "Minimalist Backpack",
+    price: 1999,
+    originalPrice: 2499,
+    image: "https://picsum.photos/400?random=2",
+    sizes: ["M", "L"],
+  },
+  {
+    id: "3",
+    name: "Oversized Hoodie",
+    price: 1499,
+    originalPrice: 1899,
+    image: "https://picsum.photos/400?random=3",
+    sizes: ["S", "M", "L", "XL"],
+  },
 ]
 
 export function ProductCard({ product }: { product: Product }) {
@@ -80,16 +128,7 @@ export function ProductCard({ product }: { product: Product }) {
             }`}
           />
 
-          {/* Wishlist Icon */}
-          <button
-            onClick={(e) => {
-              e.preventDefault()
-              e.stopPropagation()
-            }}
-            className="absolute top-3 right-3 rounded-full p-2 bg-white shadow hover:bg-pink-50 transition"
-          >
-            <Heart className="h-5 w-5 text-gray-600 hover:text-pink-600" />
-          </button>
+         
         </div>
 
         {/* Body */}
@@ -121,7 +160,7 @@ export function ProductCard({ product }: { product: Product }) {
           {/* Add to Cart */}
           <Button
             onClick={handleAddToCart}
-            className="mt-2 w-full rounded-full bg-black text-white hover:bg-gray-800 transition"
+            className="w-full md:w-auto bg-pink-600 text-white rounded-full px-8 py-3 hover:bg-pink-700 transition shadow-lg"
           >
             <ShoppingCart className="h-4 w-4 mr-2" />
             Add to Cart

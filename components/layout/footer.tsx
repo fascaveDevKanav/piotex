@@ -6,20 +6,7 @@ import { Input } from "@/components/ui/input"
 export function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
-      {/* Newsletter Section */}
-      <div className="bg-pink-600">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <div className="text-center">
-            <h3 className="text-2xl font-bold mb-2">Stay Updated with Latest Fashion</h3>
-            <p className="text-pink-100 mb-6">Subscribe to our newsletter for exclusive offers and new arrivals</p>
-            <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
-              <Input type="email" placeholder="Enter your email" className="bg-white text-gray-900 border-0" />
-              <Button className="bg-white text-pink-600 hover:bg-gray-100">Subscribe</Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
+   
       {/* Main Footer */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">

@@ -7,6 +7,7 @@ const api = axios.create({
     timeout: 10000,
 });
 
+
 //  sending the api and token in the header on every request 
 api.interceptors.request.use((config) =>{
    const ApiKey = process.env.NEXT_PUBLIC_API_KEY;
