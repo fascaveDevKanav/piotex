@@ -31,10 +31,6 @@ export function Header() {
             <span className="ml-2 text-xl font-bold text-gray-900"> Ladies Wear</span>
           </Link>
 
-          {/* Desktop Search Bar */}
-          <div className="hidden md:flex flex-1 max-w-lg mx-8">
-            <SearchBar />
-          </div>
 
           {/* Right side */}
           <div className="flex items-center space-x-4">
@@ -83,13 +79,13 @@ export function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        {isAuthenticated && (
+   
           <div className="hidden md:block border-t border-gray-200">
             <div className="py-4">
               <MegaMenu />
             </div>
           </div>
-        )}
+
 
         {/* Mobile Search Bar */}
         {/* {isAuthenticated && (

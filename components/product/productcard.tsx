@@ -21,7 +21,7 @@ interface Product {
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart()
   const [hovered, setHovered] = useState(false)
-
+  
   const handleAddToCart = (e: React.MouseEvent) => {
     e.preventDefault()
     e.stopPropagation()

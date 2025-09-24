@@ -1,22 +1,36 @@
+"use client"
 import { Footer } from "@/components/layout/footer";
 import { Header } from "@/components/layout/header";
-import ProductGrid from "@/components/product/productcard";
+import  { ProductCard } from "@/components/product/productcard";
+import { Allproducts } from "@/lib/products";
+import { useEffect, useState } from "react";
 
-
+import { useProduct } from "@/hooks/usedata-product";
 export default function ProductPage(){
+    const { productData, setProductData } = useProduct()
+ 
+   useEffect(()=>{
+  const fetchData = async()=>{
+  const data = await Allproducts();
+  setProductData(data?.products)
+  }
+  fetchData()
+   },[setProductData])
+
    return(
      <div className=" bg-gray-50">
       <Header />
 
 
      <div className="container ">
-       <ProductGrid />
+       <div className="container mx-auto px-4 py-5">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {productData.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </div>
      </div>
-
-
-
-     
-
       <Footer />
     </div>
    )

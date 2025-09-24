@@ -1,13 +1,17 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Menu,  } from 'lucide-react';
 import { AllCategories } from '@/lib/data';
+import Link from 'next/link';
+import endpoints from '@/lib/endpoints/endponts';
+import { Allproducts } from '@/lib/products';
+import { useRouter } from 'next/navigation';
 
 const MegaMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const [categoriesData, setCategoriesData] = useState([])
-
+  const router = useRouter()
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -39,7 +43,15 @@ const MegaMenu = () => {
    }
    fetchCategories()
   },[])
+  
 console.log(categoriesData,"catdata")
+
+  const handleClickCateory = async(id:any)=>{
+ 
+  
+   
+
+  }
   return (
     <header >
   
@@ -63,7 +75,7 @@ console.log(categoriesData,"catdata")
                   <div className="p-6">
                     <div className="grid grid-cols-4 gap-6">
                       {categoriesData?.map((category: any) => (
-                        <div key={category?.id} className="group cursor-pointer">
+                        <button onClick={()=> {handleClickCateory(category?.id)}} key={category?.id} className="group cursor-pointer">
                        <div className="relative mb-3 overflow-hidden rounded-lg">
                       <img
                         src={`${process.env.NEXT_PUBLIC_API_BASE_URL}uploads/${category?.image}`}
@@ -76,7 +88,7 @@ console.log(categoriesData,"catdata")
                             {category.name}
                           </h3>
                           
-                        </div>
+                        </button>
                       ))}
                     </div>
                 
