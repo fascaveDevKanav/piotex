@@ -11,84 +11,18 @@ import { Allproducts } from "@/lib/products"
 
 
 
-// Example products (dynamic mock data)
-const products = [
-  {
-    id: "1",
-    name: "Classic White Sneakers",
-    price: 2999,
-    originalPrice: 3999,
-    image: "https://picsum.photos/400?random=1",
-    sizes: ["6", "7", "8", "9", "10"],
-  },
-  {
-    id: "2",
-    name: "Minimalist Backpack",
-    price: 1999,
-    originalPrice: 2499,
-    image: "https://picsum.photos/400?random=2",
-    sizes: ["M", "L"],
-  },
-  {
-    id: "3",
-    name: "Oversized Hoodie",
-    price: 1499,
-    originalPrice: 1899,
-    image: "https://picsum.photos/400?random=3",
-    sizes: ["S", "M", "L", "XL"],
-  },
-    {
-    id: "2",
-    name: "Minimalist Backpack",
-    price: 1999,
-    originalPrice: 2499,
-    image: "https://picsum.photos/400?random=2",
-    sizes: ["M", "L"],
-  },
-  {
-    id: "3",
-    name: "Oversized Hoodie",
-    price: 1499,
-    originalPrice: 1899,
-    image: "https://picsum.photos/400?random=3",
-    sizes: ["S", "M", "L", "XL"],
-  },
-    {
-    id: "2",
-    name: "Minimalist Backpack",
-    price: 1999,
-    originalPrice: 2499,
-    image: "https://picsum.photos/400?random=2",
-    sizes: ["M", "L"],
-  },
-  {
-    id: "3",
-    name: "Oversized Hoodie",
-    price: 1499,
-    originalPrice: 1899,
-    image: "https://picsum.photos/400?random=3",
-    sizes: ["S", "M", "L", "XL"],
-  },
-    {
-    id: "2",
-    name: "Minimalist Backpack",
-    price: 1999,
-    originalPrice: 2499,
-    image: "https://picsum.photos/400?random=2",
-    sizes: ["M", "L"],
-  },
-  {
-    id: "3",
-    name: "Oversized Hoodie",
-    price: 1499,
-    originalPrice: 1899,
-    image: "https://picsum.photos/400?random=3",
-    sizes: ["S", "M", "L", "XL"],
-  },
-]
+interface Product {
+  id: string
+  name: string,
+  price: number,
+  originalPrice?: number
+  sizes: string[]
+  ProductImages: { imageUrl: string }[]
+
+}
 
 
-export function ProductCard({ product }) {
+export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart()
   const [hovered, setHovered] = useState(false)
 
