@@ -5,6 +5,7 @@ import Link from 'next/link';
 import endpoints from '@/lib/endpoints/endponts';
 import { Allproducts } from '@/lib/products';
 import { useRouter } from 'next/navigation';
+import { useProduct } from '@/hooks/usedata-product';
 
 const MegaMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -12,6 +13,7 @@ const MegaMenu = () => {
   const menuRef = useRef(null);
   const [categoriesData, setCategoriesData] = useState([])
   const router = useRouter()
+  const {setProductData}= useProduct()
   // Close menu when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -44,10 +46,13 @@ const MegaMenu = () => {
    fetchCategories()
   },[])
   
-console.log(categoriesData,"catdata")
+
 
   const handleClickCateory = async(id:any)=>{
- 
+    const data = await Allproducts(id);
+    setIsOpen(false)
+    setProductData(data?.products)
+    router.push(`/products`)
   
    
 
