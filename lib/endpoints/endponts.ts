@@ -6,9 +6,13 @@ const endpoints ={
         verifyOtp:"api/auth/verify-otp"
     },
     categories:{
-        getAllcategories:"api/admincategories/getAllCategories",
-
+        getAllcategories:"api/usercategories/all",
+    },
+    products:{
+        allproduct:"api/userproducts/all",
+        getProductId:"api/userproducts/getProductById"
     }
+
  
 
 }

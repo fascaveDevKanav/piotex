@@ -1,25 +1,18 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { ShoppingCart, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useCart } from "@/hooks/use-cart"
+import { Allproducts } from "@/lib/products"
 
-// Example product type
-interface Product {
-  id: string
-  name: string
-  price: number
-  originalPrice?: number
-  image: string
-  sizes: string[]
-}
+
 
 // Example products (dynamic mock data)
-const products: Product[] = [
+const products = [
   {
     id: "1",
     name: "Classic White Sneakers",
@@ -94,7 +87,8 @@ const products: Product[] = [
   },
 ]
 
-export function ProductCard({ product }: { product: Product }) {
+
+export function ProductCard({ product }) {
   const { addItem } = useCart()
   const [hovered, setHovered] = useState(false)
 
@@ -120,7 +114,7 @@ export function ProductCard({ product }: { product: Product }) {
         {/* Image */}
         <div className="relative w-full aspect-square bg-gray-50">
           <Image
-            src={product.image}
+            src={`${process.env.NEXT_PUBLIC_API_BASE_URL}uploads/${product?.ProductImages?.[0]?.imageUrl}`}
             alt={product.name}
             fill
             className={`object-contain transition-transform duration-700 ${
@@ -150,12 +144,12 @@ export function ProductCard({ product }: { product: Product }) {
           </div>
 
           {/* Sizes */}
-          {product.sizes.length > 1 && (
+          {/* {product.sizes.length > 1 && (
             <p className="text-xs text-gray-500">
               Sizes: {product.sizes.slice(0, 3).join(", ")}
-              {product.sizes.length > 3 && " …"}
+              {product?.ProductSizes.length > 3 && " …"}
             </p>
-          )}
+          )} */}
 
           {/* Add to Cart */}
           <Button
@@ -173,10 +167,23 @@ export function ProductCard({ product }: { product: Product }) {
 
 // 👇 Grid Preview with Dynamic Data
 export default function ProductGrid() {
+    const [productData, setProductData] = useState([]);
+  
+  useEffect(()=>{
+
+    const fetchData = async()=>{
+      const result = await  Allproducts();
+      setProductData(result?.products || []);
+
+    }
+    fetchData()
+  
+  },[])
+  console.log("productData",productData)
   return (
     <div className="container mx-auto px-4 py-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {products.map((p) => (
+        {productData.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
       </div>
