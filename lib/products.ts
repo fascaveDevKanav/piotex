@@ -10,3 +10,15 @@ export const Allproducts  = async()=>{
     console.log(error)
   }
 }
+
+export const ProductById  = async(id:any)=>{
+   try {
+     const res = await api.post(endpoints.products?.getProductId,{
+id:id
+     })
+      return res?.data
+   } catch (error) {
+     return console.log(error)
+    
+   }
+}

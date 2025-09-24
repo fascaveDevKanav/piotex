@@ -3,13 +3,11 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ShoppingCart, Heart } from "lucide-react"
+import { ShoppingCart, } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useCart } from "@/hooks/use-cart"
 import { Allproducts } from "@/lib/products"
-
-
 
 interface Product {
   id: string
@@ -18,9 +16,7 @@ interface Product {
   originalPrice?: number
   sizes: string[]
   ProductImages: { imageUrl: string }[]
-
 }
-
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart()
