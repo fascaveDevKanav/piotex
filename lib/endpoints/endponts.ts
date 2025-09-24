@@ -6,7 +6,7 @@ const endpoints ={
         verifyOtp:"api/auth/verify-otp"
     },
     categories:{
-        getAllcategories:"api/categories/all",
+        getAllcategories:"api/admincategories/getAllCategories",
 
     }
  

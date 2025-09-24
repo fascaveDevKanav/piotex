@@ -7,56 +7,6 @@ const MegaMenu = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
   const [categoriesData, setCategoriesData] = useState([])
-  const categories = [
-    {
-      id: 1,
-      name: 'Kurtis',
-      image: 'https://images.unsplash.com/photo-1594633313593-bab3825d0caf?w=300&h=200&fit=crop',
-      subcategories: ['Casual Kurtis', 'Party Wear', 'Work Wear', 'Printed Kurtis'],
-    },
-    {
-      id: 2,
-      name: 'Sarees',
-      image: 'https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&h=200&fit=crop',
-      subcategories: ['Silk Sarees', 'Cotton Sarees', 'Designer Sarees', 'Wedding Sarees'],
-    },
-    {
-      id: 3,
-      name: 'Dresses',
-      image: 'https://images.unsplash.com/photo-1566479179817-0fe8eed3e4e8?w=300&h=200&fit=crop',
-      subcategories: ['Casual Dresses', 'Party Dresses', 'Maxi Dresses', 'Mini Dresses'],
-    },
-    {
-      id: 4,
-      name: 'Tops & Tunics',
-      image: 'https://images.unsplash.com/photo-1551698618-1dfe5d97d256?w=300&h=200&fit=crop',
-      subcategories: ['Crop Tops', 'Tunics', 'Blouses', 'Tank Tops'],
-    },
-    {
-      id: 5,
-      name: 'Bottoms',
-      image: 'https://images.unsplash.com/photo-1541099649105-f69ad21f3246?w=300&h=200&fit=crop',
-      subcategories: ['Jeans', 'Leggings', 'Palazzo', 'Skirts'],
-    },
-    {
-      id: 6,
-      name: 'Accessories',
-      image: 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&h=200&fit=crop',
-      subcategories: ['Jewelry', 'Bags', 'Scarves', 'Belts'],
-    },
-    {
-      id: 7,
-      name: 'Footwear',
-      image: 'https://images.unsplash.com/photo-1543163521-1bf539c55dd2?w=300&h=200&fit=crop',
-      subcategories: ['Heels', 'Flats', 'Sandals', 'Boots'],
-    },
-    {
-      id: 8,
-      name: 'Ethnic Wear',
-      image: 'https://images.unsplash.com/photo-1583391733956-6c78276477e1?w=300&h=200&fit=crop',
-      subcategories: ['Lehenga', 'Anarkali', 'Sharara', 'Palazzo Sets'],
-    },
-  ];
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -115,12 +65,12 @@ console.log(categoriesData,"catdata")
                       {categoriesData?.map((category: any) => (
                         <div key={category?.id} className="group cursor-pointer">
                        <div className="relative mb-3 overflow-hidden rounded-lg">
-  <img
-      src={`https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&h=200&fit=crop`}
-    alt={category?.name}
-    className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-110"
-  />
-</div>
+                      <img
+                        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}uploads/${category?.image}`}
+                          alt={category?.name}
+                            className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-110"
+                               />
+                              </div>
 
                           <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-pink-600 transition-colors">
                             {category.name}
@@ -133,13 +83,7 @@ console.log(categoriesData,"catdata")
                   </div>
                 </div>
               )}
-            </div>
-
-    
-
-
-
-    
+            </div>    
     </header>
   );
 };
