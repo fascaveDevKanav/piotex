@@ -1,4 +1,7 @@
-const  categories = [
+import api from "./api/api";
+import endpoints from "./endpoints/endponts";
+
+export const categories = [
   {
     id: "1",
     name: "Traditional Wear",
@@ -20,4 +23,14 @@ const  categories = [
     
   },
 ]
-export default categories
+
+export const AllCategories = async()=>{
+  
+  try {
+    const res = await api.get(endpoints?.categories?.getAllcategories);
+   return res?.data
+  } catch (error) {
+    console.log(error);
+    return [];
+  }
+}

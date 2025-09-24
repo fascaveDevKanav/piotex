@@ -1,11 +1,12 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Menu,  } from 'lucide-react';
+import { AllCategories } from '@/lib/data';
 
 const MegaMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const menuRef = useRef(null);
-
+  const [categoriesData, setCategoriesData] = useState([])
   const categories = [
     {
       id: 1,
@@ -81,6 +82,14 @@ const MegaMenu = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(()=>{
+   const fetchCategories = async () => {
+    const data = await AllCategories();
+    setCategoriesData(data?.categories);
+   }
+   fetchCategories()
+  },[])
+console.log(categoriesData,"catdata")
   return (
     <header >
   
@@ -103,16 +112,16 @@ const MegaMenu = () => {
                 <div className="absolute left-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl w-[800px] z-50 transition-all duration-200 ease-out opacity-100 scale-100">
                   <div className="p-6">
                     <div className="grid grid-cols-4 gap-6">
-                      {categories.map((category) => (
-                        <div key={category.id} className="group cursor-pointer">
-                          <div className="relative mb-3 overflow-hidden rounded-lg">
-                            <img
-                              src={category.image}
-                              alt={category.name}
-                              className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-110"
-                            />
-                            <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-all duration-300" />
-                          </div>
+                      {categoriesData?.map((category: any) => (
+                        <div key={category?.id} className="group cursor-pointer">
+                       <div className="relative mb-3 overflow-hidden rounded-lg">
+  <img
+      src={`https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=300&h=200&fit=crop`}
+    alt={category?.name}
+    className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-110"
+  />
+</div>
+
                           <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-pink-600 transition-colors">
                             {category.name}
                           </h3>

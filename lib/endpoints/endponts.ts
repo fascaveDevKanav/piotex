@@ -1,5 +1,3 @@
-
-
 const endpoints ={
 
     auth:{
@@ -7,6 +5,10 @@ const endpoints ={
         signup:"api/auth/signup",
         verifyOtp:"api/auth/verify-otp"
     },
+    categories:{
+        getAllcategories:"api/categories/all",
+
+    }
  
 
 }

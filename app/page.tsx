@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent,  } from "@/components/ui/card"
 import Link from "next/link"
 
-import  categories  from "@/lib/data"
+import  {categories}  from "@/lib/data"
 import ProductGrid from "@/components/product/productcard"
 
 export default function HomePage() {
