@@ -1,15 +1,23 @@
-import { categories } from "@/lib/categories"
-import { products, filterProducts, type FilterOptions } from "@/lib/products"
+const  categories = [
+  {
+    id: "1",
+    name: "Traditional Wear",
+   
+  },
+  {
+    id: "2",
+    name: "Casual Wear",
 
-export { categories }
+  },
+  {
+    id: "3",
+    name: "Western Wear",
 
-export function getProducts(options: { limit?: number } & FilterOptions = {}) {
-  const { limit, ...filterOptions } = options
-  let filteredProducts = filterProducts(products, filterOptions)
-
-  if (limit) {
-    filteredProducts = filteredProducts.slice(0, limit)
-  }
-
-  return filteredProducts
-}
+  },
+  {
+    id: "4",
+    name: "Accessories",
+    
+  },
+]
+export default categories

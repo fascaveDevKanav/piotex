@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent,  } from "@/components/ui/card"
 import Link from "next/link"
 
-import { categories } from "@/lib/data"
+import  categories  from "@/lib/data"
 import ProductGrid from "@/components/product/productcard"
 
 export default function HomePage() {
@@ -47,18 +47,18 @@ export default function HomePage() {
           <h2 className="text-2xl font-bold text-gray-900 mb-8 text-center">Shop by Category</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category) => (
-              <Link key={category.id} href={`/category/${category.slug}`} className="group">
+              <div key={category.id}  className="group">
                 <Card className="h-48 bg-gradient-to-br from-pink-100 to-purple-100 hover:shadow-lg transition-all duration-300 group-hover:scale-105">
                   <CardContent className="flex items-center justify-center h-full">
                     <div className="text-center">
                       <h3 className="text-xl font-semibold text-gray-900 group-hover:text-pink-600 transition-colors">
                         {category.name}
                       </h3>
-                      <p className="text-sm text-gray-600 mt-2">{category.subcategories.length} categories</p>
+                    
                     </div>
                   </CardContent>
                 </Card>
-              </Link>
+              </div>
             ))}
           </div>
         </div>

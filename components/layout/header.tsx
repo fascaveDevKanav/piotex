@@ -4,7 +4,7 @@ import Link from "next/link"
 import { ShoppingBag, User, LogOut, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
-import { MegaMenu } from "@/components/navigation/mega-menu"
+import  MegaMenu  from "@/components/navigation/mega-menu"
 import { SearchBar } from "@/components/navigation/search-bar"
 import { CartIcon } from "@/components/navigation/cart-icon"
 import {
@@ -28,7 +28,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <ShoppingBag className="h-8 w-8 text-pink-600" />
-            <span className="ml-2 text-xl font-bold text-gray-900">Ladies Wear</span>
+            <span className="ml-2 text-xl font-bold text-gray-900"> Ladies Wear</span>
           </Link>
 
           {/* Desktop Search Bar */}
@@ -92,11 +92,11 @@ export function Header() {
         )}
 
         {/* Mobile Search Bar */}
-        {isAuthenticated && (
+        {/* {isAuthenticated && (
           <div className="md:hidden border-t border-gray-200 py-3">
             <SearchBar />
           </div>
-        )}
+        )} */}
 
         {/* Mobile Navigation */}
         {isAuthenticated && mobileMenuOpen && (
