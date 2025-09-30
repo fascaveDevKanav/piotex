@@ -53,13 +53,12 @@ export const clearEmail =(): void=>{
 
 export const login = async (email: string, password: string) => {
   try {
-    const response = await api.post("/api/auth/signin", { email, password });
+    const response = await api.post(endpoints.auth.signin, { email, password });
     console.log("Login response:", response);
 
     if (response.status === 200) {
       const user = response.data.user;
-      saveUser(user);
-      setAuthToken(response.data.token);
+      // setAuthToken(response.data.token); // Set token for future requests
       return { success: true, user, token: response.data.token };
     } else {
       // Handle unexpected status codes
@@ -85,21 +84,22 @@ export const signup = async (
 ) => {
  
 try {
-   const res = await api.post(endpoints.auth.signin,{name,email,password,number})
-   console.log("Signup response:", res);
+   const response = await api.post(endpoints.auth.signup,{name,email,password,number})
+   console.log("Signup response:", response);
 
-   if(res.status === 200){
+   if(response.status === 201){
     saveEmail(email)
-    return true;
+    return {success: true};
    }else{
-    throw new Error(res.data.message || "Signup failed");
+      const message = errorResponse(response);
+      console.error("Signup failed:", message);
+      return { success: false, message };
    }
-   
-
 } catch (err: any) {
-
-   console.error("Signup error:", err);
-   throw new Error(err.message || "Signup failed");
+   // Network errors or Axios errors
+    const message = errorResponse(err);
+    console.error("Signup error:", message);
+    return { success: false, message };
 }
 }
 
@@ -112,11 +112,20 @@ export const verifyOtp = async (otp: string)=>{
   }
   try {
     const newotp = otp.toString()
-    const res = await api.post(endpoints.auth.verifyOtp, { email, otp:newotp })
-    return res 
+    const response = await api.post(endpoints.auth.verifyOtp, { email, otp:newotp })
+
+    if( response.status === 200){
+      return { success: true, status: 200 };
+    }
+    else{
+      const message = errorResponse(response);
+      console.error("OTP verification failed:", message);
+      return { success: false, message };
+    }
   } catch (error) {
     console.error("OTP verification error:", error);
-    throw new Error("OTP verification failed");
+    const message = errorResponse(error);
+    return { success: false, message };
     
   }
 }

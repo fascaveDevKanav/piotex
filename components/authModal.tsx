@@ -28,7 +28,7 @@ export const OtpModal = ({ visible, onClose }: OtpModalProps) => {
       const otpValue = value.join("");
       const result = await verifyOtp(otpValue);
 
-      if (result.status === 200) {
+      if (result.success) {
         message.success("OTP Verified ✅");
         clearEmail();
         setOtp(""); // clear the OTP input

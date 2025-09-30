@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, Mail, Lock } from "lucide-react"
 import { login } from "@/lib/auth"
 import { useAuth } from "@/hooks/use-auth"
+import { setAuthToken } from "@/lib/common/common"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -28,9 +29,10 @@ export default function LoginPage() {
   setError("");
 
   const result = await login(email, password);
-
+  console.log("Login result:", result);
   if (result.success) {
-
+    authLogin(result.user);
+    setAuthToken(result.token);
     router.push("/");
   } else {
     setError(result.message || "Login failed");

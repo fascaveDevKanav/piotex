@@ -1,5 +1,6 @@
 import axios from "axios"
 import { getAuthToken, removeAuthToken } from "../common/common";
+import { removeUser } from "../auth";
 
 
 const api = axios.create({
@@ -10,9 +11,9 @@ const api = axios.create({
 
 //  sending the api and token in the header on every request 
 api.interceptors.request.use((config) =>{
-   const ApiKey = process.env.NEXT_PUBLIC_API_KEY;
-   if (ApiKey) {
-       config.headers['apikey'] = ApiKey;
+   const apikey = process.env.NEXT_PUBLIC_API_KEY;
+   if (apikey) {
+       config.headers['apikey'] = apikey;
    }
 
    const token = getAuthToken();
@@ -29,7 +30,7 @@ api.interceptors.request.use((config) =>{
 api.interceptors.response.use((response)=> response,
 (error)=>{
    if(error.response?.status === 401){
-    removeAuthToken();
+    localStorage.clear();
     
     if(typeof window !== 'undefined'){
         window.location.href = '/login';

@@ -21,6 +21,7 @@ export const removeAuthToken = (): void => {
 
 
 export const errorResponse =(response : any)=>{
+  console.log("Error response:", response);
   if(response?.response?.data?.message){
    return response?.response?.data?.message || "An error occurred";
   }

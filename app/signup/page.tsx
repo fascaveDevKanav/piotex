@@ -24,7 +24,6 @@ export default function SignupPage() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const router = useRouter()
-  const { login: authLogin } = useAuth()
   const [isOtpModalVisible, setIsOtpModalVisible] = useState<boolean>(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,22 +43,17 @@ export default function SignupPage() {
       setLoading(false)
       return
     }
-
-    try {
       const result = await signup(name, email, password, number)
-       if(result === true){
+       if(result.success){
         // make true the otp verification model
         setIsOtpModalVisible(true);
        }else{
-        setError("Signup failed")
+        console.log(result ,"result")
+        setError(result.message || "Signup failed");
        }
-   
-    } catch (err) {
-      setError("An unexpected error occurred")
-    } finally {
       setLoading(false)
     }
-  }
+  
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 p-4">
