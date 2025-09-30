@@ -22,26 +22,23 @@ export default function LoginPage() {
   const router = useRouter()
   const { login: authLogin } = useAuth()
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setLoading(true)
-    setError("")
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setLoading(true);
+  setError("");
 
-    try {
-      const result = await login(email, password)
+  const result = await login(email, password);
 
-      if( result && result.status === 200){
-        router.push("/")
-      }
-      else{
-        setError(result?.data?.message || "Login failed")
-      }
-    } catch (err) {
-      setError( "An unexpected error occurred")
-    } finally {
-      setLoading(false)
-    }
+  if (result.success) {
+
+    router.push("/");
+  } else {
+    setError(result.message || "Login failed");
   }
+
+  setLoading(false);
+};
+
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 p-4">

@@ -29,15 +29,7 @@ export default function HomePage() {
                   Shop Now
                 </Button>
               </Link>
-              <Link href="/products?sale=true">
-                <Button
-                  size="lg"
-                  variant="outline"
-                  className="border-white text-white hover:bg-white hover:text-pink-600 px-8 py-3 text-lg bg-transparent"
-                >
-                  Sale Items
-                </Button>
-              </Link>
+         
             </div>
           </div>
         </div>

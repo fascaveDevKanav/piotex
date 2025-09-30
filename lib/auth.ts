@@ -1,5 +1,5 @@
 import api from "./api/api"
-import { setAuthToken } from "./common/common"
+import { errorResponse, setAuthToken } from "./common/common"
 import endpoints from "./endpoints/endponts"
 
 export interface User {
@@ -50,31 +50,31 @@ export const clearEmail =(): void=>{
   localStorage.removeItem("email")
 }
 
-// Login function
-export const login =async (email: string, password: string) => {
-try {
-   const response = await api.post("api/auth/signin",{email,password})
-    console.log("Login response:", response);
-   
-     if(response.status === 200){
-      const user = response.data.user;
-      console.log(user);
-      saveUser(user)
-      setAuthToken(response.data.token)
-      return response
-     }
-    else{
-      console.error("Login failed with status:");
-      return response
-    }
-   
-  
-} catch (err: any) {
-   console.error("Signup error:", err);
-   throw new Error(err.message || "Signup failed");
-}
 
-}
+export const login = async (email: string, password: string) => {
+  try {
+    const response = await api.post("/api/auth/signin", { email, password });
+    console.log("Login response:", response);
+
+    if (response.status === 200) {
+      const user = response.data.user;
+      saveUser(user);
+      setAuthToken(response.data.token);
+      return { success: true, user, token: response.data.token };
+    } else {
+      // Handle unexpected status codes
+      const message = errorResponse(response);
+      console.error("Login failed:", message);
+      return { success: false, message };
+    }
+  } catch (err: any) {
+    // Network errors or Axios errors
+    const message = errorResponse(err);
+    console.error("Login error:", message);
+    return { success: false, message };
+  }
+};
+
 
 // Signup function
 export const signup = async (

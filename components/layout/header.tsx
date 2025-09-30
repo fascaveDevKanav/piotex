@@ -5,13 +5,10 @@ import { ShoppingBag, User, LogOut, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useAuth } from "@/hooks/use-auth"
 import  MegaMenu  from "@/components/navigation/mega-menu"
-import { SearchBar } from "@/components/navigation/search-bar"
+
 import { CartIcon } from "@/components/navigation/cart-icon"
 import {
   DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { useState } from "react"
@@ -46,19 +43,7 @@ export function Header() {
                     <span className="hidden sm:inline">{user?.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-48">
-                  <DropdownMenuItem asChild>
-                    <Link href="/profile">My Profile</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuItem asChild>
-                    <Link href="/orders">My Orders</Link>
-                  </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem onClick={logout} className="text-red-600">
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Logout
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
+            
               </DropdownMenu>
             ) : (
               <div className="flex items-center space-x-2">

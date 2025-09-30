@@ -18,3 +18,20 @@ export const removeAuthToken = (): void => {
     sessionStorage.removeItem('authToken');
   }
 };
+
+
+export const errorResponse =(response : any)=>{
+  if(response?.response?.data?.message){
+   return response?.response?.data?.message || "An error occurred";
+  }
+ 
+
+  
+  // Network error or other errors
+  if (response.message) {
+    return response.message;
+  }
+
+  // Fallback
+  return "An unexpected error occurred";
+}
