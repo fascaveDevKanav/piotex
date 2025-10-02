@@ -6,7 +6,7 @@ export const Allproducts = async (id?: number | string) => {
     const res = id
       ? await api.get(`${endpoints.products.allproduct}?categoryId=${id}`)
       : await api.get(endpoints.products.allproduct)
-
+    console.log("res", res)
     return res?.data
   } catch (error) {
     console.error("Error fetching products:", error)

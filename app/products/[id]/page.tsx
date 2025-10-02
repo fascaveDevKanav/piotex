@@ -49,8 +49,6 @@ export default function ProductDetailsPage() {
   const { addItem } = useCart()
 
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
-  const [isFavorite, setIsFavorite] = useState(false)
-
   const [data, setData] = useState<Product | null>(null)
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
   const [selectedColor, setSelectedColor] = useState<string | null>(null)

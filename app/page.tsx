@@ -8,21 +8,10 @@ import Link from "next/link"
 
 import  {categories}  from "@/lib/data"
 import ProductGrid from "@/components/product/productcard"
-import { reduxSliceData } from "@/redux/features/reduxData"
-import { useDispatch, useSelector } from "react-redux"
-import { useEffect } from "react"
 
 
 export default function HomePage() {
 
-  const {selectedCategory} = useSelector((state:any)=>state.reduxData?.data)
-
-const dispatch = useDispatch()
-useEffect(()=>{
-  dispatch(reduxSliceData({ key: 'selectedCategory', data: 2 }));
-},[])
-
-  console.log("selectedCategory",selectedCategory)
  
   
   return (

@@ -7,7 +7,9 @@ import { ShoppingCart, } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useCart } from "@/hooks/use-cart"
-import { Allproducts } from "@/lib/products"
+
+import { getListData } from "@/lib/customfetch/customFetch"
+import endpoints from "@/lib/endpoints/endponts"
 
 interface Product {
   id: string
@@ -17,6 +19,8 @@ interface Product {
   sizes: string[]
   ProductImages: { imageUrl: string }[]
 }
+
+import { useDispatch, useSelector } from "react-redux"
 
 export function ProductCard({ product }: { product: Product }) {
   const { addItem } = useCart()
@@ -97,23 +101,19 @@ export function ProductCard({ product }: { product: Product }) {
 
 // 👇 Grid Preview with Dynamic Data
 export default function ProductGrid() {
-    const [productData, setProductData] = useState([]);
-  
+  const dispatch = useDispatch()
+  const { productData } = useSelector((state:any)=> state?.reduxData?.data)
   useEffect(()=>{
-
+    console.log("fetching data calling")
     const fetchData = async()=>{
-      const result = await  Allproducts();
-      setProductData(result?.products || []);
-
+    await getListData(dispatch,'productData', endpoints?.products?.allproduct )
     }
     fetchData()
-  
   },[])
-  console.log("productData",productData)
   return (
     <div className="container mx-auto px-4 py-5">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {productData.map((p) => (
+        {productData?.products?.map((p) => (
           <ProductCard key={p.id} product={p} />
         ))}
       </div>
