@@ -8,6 +8,7 @@ import { CartProvider } from "@/hooks/use-cart"
 import { Suspense } from "react"
 import "./globals.css"
 import { ProductProvider } from "@/hooks/usedata-product"
+import StoreProvider from "./StoreProvider"
 
 export const metadata: Metadata = {
   title: "Ladies Wear - Fashion E-commerce",
@@ -24,7 +25,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Suspense fallback={<div>Loading...</div>}>
-          <AuthProvider>
+        <StoreProvider>
+       <AuthProvider>
+
             <ProductProvider>
             <CartProvider>
               {children}
@@ -33,6 +36,8 @@ export default function RootLayout({
               
               
           </AuthProvider>
+        </StoreProvider>
+       
         </Suspense>
         <Analytics />
       </body>
