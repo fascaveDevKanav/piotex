@@ -5,6 +5,7 @@ interface ReduxStateData {
   data: any;
   pagination: any;
   filterData: {},
+  
 }
 // Define the initial state
 const initialState: ReduxStateData = {
@@ -40,6 +41,6 @@ export const {
   clearAll,
   reduxSliceData,
   pagination,
-   setFilterData,
+  setFilterData,
 } = reduxDataSlice.actions;
 export default reduxDataSlice.reducer;

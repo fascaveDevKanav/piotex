@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import Link from "next/link"
-import { ShoppingCart, } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { useCart } from "@/hooks/use-cart"
+
 
 import { getListData } from "@/lib/customfetch/customFetch"
 import endpoints from "@/lib/endpoints/endponts"
@@ -15,6 +14,7 @@ interface Product {
   id: string
   name: string,
   price: number,
+  image: string,
   originalPrice?: number
   sizes: string[]
   ProductImages: { imageUrl: string }[]
@@ -23,21 +23,9 @@ interface Product {
 import { useDispatch, useSelector } from "react-redux"
 
 export function ProductCard({ product }: { product: Product }) {
-  const { addItem } = useCart()
+
   const [hovered, setHovered] = useState(false)
   
-  const handleAddToCart = (e: React.MouseEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-    addItem({
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      image: product.image,
-      size: product.sizes[0],
-    })
-  }
-
   return (
     <Link href={`/products/${product.id}`}>
       <Card
@@ -87,11 +75,10 @@ export function ProductCard({ product }: { product: Product }) {
 
           {/* Add to Cart */}
           <Button
-            onClick={handleAddToCart}
-            className="w-full md:w-auto bg-pink-600 text-white rounded-full px-8 py-3 hover:bg-pink-700 transition shadow-lg"
+            className="w-full md:w-auto bg-pink-600 text-white rounded-full px-8 py-3 hover:bg-pink-700 transition shadow-lg cursor-pointer"
           >
-            <ShoppingCart className="h-4 w-4 mr-2" />
-            Add to Cart
+            
+            Check Details
           </Button>
         </div>
       </Card>

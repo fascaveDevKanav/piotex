@@ -11,6 +11,11 @@ const endpoints ={
     products:{
         allproduct:"api/userproducts/all",
         getProductId:"api/userproducts/getProductById"
+    },
+    cart:{
+        add: 'api/cart/add',
+        remove:"api/cart/remove",
+        get:"api/cart/get"
     }
 
  

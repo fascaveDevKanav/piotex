@@ -1,11 +1,10 @@
 "use client"
 
-import { useEffect, useState } from "react"
+import { use, useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
-import { ShoppingCart, Heart, Share2 } from "lucide-react"
+import { ShoppingCart, Share2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { useCart } from "@/hooks/use-cart"
 import { Header } from "@/components/layout/header"
 import { Footer } from "@/components/layout/footer"
 
@@ -16,60 +15,30 @@ import "swiper/css"
 import "swiper/css/navigation"
 import "swiper/css/pagination"
 import "swiper/css/thumbs"
-import { ProductById } from "@/lib/products"
 
-interface ProductImage {
-  id: string
-  imageUrl: string
-}
+import {  addData, getProductById } from "@/lib/customfetch/customFetch"
+import endpoints from "@/lib/endpoints/endponts"
+import { useDispatch, useSelector } from "react-redux"
+import { message } from "antd"
+import { se } from "date-fns/locale"
 
-interface ProductSize {
-  id: string
-  size: string
-}
-
-interface ProductColor {
-  id: string
-  name: string
-  hex: string // e.g. "#FF0000"
-}
-
-interface Product {
-  id: string
-  name: string
-  price: number
-  description: string
-  ProductImages: ProductImage[]
-  ProductSizes: ProductSize[]
-  ProductColors: ProductColor[]
-}
 
 export default function ProductDetailsPage() {
   const { id } = useParams()
-  const { addItem } = useCart()
+
 
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
-  const [data, setData] = useState<Product | null>(null)
+ 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
-  const [selectedColor, setSelectedColor] = useState<string | null>(null)
-
-  const handleAddToCart = () => {
-    if (!data) return
-    addItem({
-      id: data.id,
-      name: data.name,
-      price: data.price,
-      image: data.ProductImages[0]?.imageUrl,
-      size: selectedSize,
-    })
-  }
+  const { productdata } = useSelector((state:any) => state?.reduxData?.data)
+   console.log('selected Size ', selectedSize)
 
   const handleShare = () => {
-    if (!data) return
+    if (!productdata?.product) return
     if (navigator.share) {
       navigator.share({
-        title: data.name,
-        text: data.description,
+        title: !productdata?.product.name,
+        text: productdata?.product.description,
         url: window.location.href,
       })
     } else {
@@ -77,16 +46,57 @@ export default function ProductDetailsPage() {
     }
   }
 
+  
+ const dispatch = useDispatch()   
+
+ useEffect(()=>{
+  if(id){
+    fetchdata()
+  }
+ },[])
+
+  //   api calling
+     const fetchdata = async()=>{
+      console.log("patasasa id:",id)
+     await getProductById(dispatch, "productdata", endpoints?.products?.getProductId, {
+      id: id
+     })
+
+     } 
+
+ const [userdata, setUserdata] = useState<any>(null)
+
   useEffect(() => {
-    const fetchData = async () => {
-      const result = await ProductById(id)
-      setData(result?.product)
-      // default selections
-      setSelectedSize(result?.product?.ProductSizes?.[0]?.size || null)
-      setSelectedColor(result?.product?.ProductColors?.[0]?.id || null)
+    const storedUser = localStorage.getItem("user")
+    if (storedUser) {
+      setUserdata(JSON.parse(storedUser))
     }
-    fetchData()
-  }, [id])
+  }, [])
+
+
+  
+
+     const addcart = async (productid: any , selectedSize :any ) =>{
+      if(!selectedSize){  
+        message.error("Please select a size")
+        return;
+      }
+      const sizename = productdata?.product?.ProductSizes?.filter((item:any)=> item.size === selectedSize)
+      const body ={
+        userId: userdata?.id,
+        productId: productid,
+        productSize: sizename?.[0]?.size,
+      }
+    const res =  await addData(endpoints?.cart?.add, body)
+    if(res?.success){
+      message.success("Product added to cart")
+     }else{
+      message.error(res?.message || "Failed to add product to cart")
+     }
+
+    }
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -111,12 +121,12 @@ export default function ProductDetailsPage() {
                 thumbs={{ swiper: thumbsSwiper }}
                 className="rounded-lg overflow-hidden shadow-md bg-white"
               >
-                {data?.ProductImages?.map((img, idx) => (
+                {productdata?.product.ProductImages?.map((img, idx) => (
                   <SwiperSlide key={idx}>
                     <div className="relative w-full aspect-square">
                       <Image
                         src={`${process.env.NEXT_PUBLIC_API_BASE_URL}uploads/${img.imageUrl}`}
-                        alt={`${data?.name}-${idx}`}
+                        alt={`${productdata?.product.name}-${idx}`}
                         fill
                         className="object-contain p-2"
                         priority={idx === 0}
@@ -132,7 +142,7 @@ export default function ProductDetailsPage() {
               {/* Title */}
               <div className="flex items-start justify-between">
                 <h1 className="text-2xl lg:text-3xl font-bold text-gray-900">
-                  {data?.name}
+                  {productdata?.product.name}
                 </h1>
                 <div className="flex gap-2">
                  
@@ -148,21 +158,21 @@ export default function ProductDetailsPage() {
               {/* Price */}
               <div className="flex items-center gap-3">
                 <span className="text-3xl font-bold text-gray-900">
-                  ₹{data?.price?.toLocaleString()}
+                  ₹{productdata?.product.price?.toLocaleString()}
                 </span>
               </div>
 
               {/* Description */}
               <p className="text-gray-700 leading-relaxed">
-                {data?.description}
+                {productdata?.product.description}
               </p>
 
               {/* Sizes */}
-              {data?.ProductSizes?.length > 0 && (
+              {productdata?.product?.ProductSizes?.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold mb-2">Select Size</h3>
                   <div className="flex gap-2 flex-wrap">
-                    {data.ProductSizes.map((item) => (
+                    {productdata?.product.ProductSizes.map((item : any) => (
                       <button
                         key={item.id}
                         onClick={() => setSelectedSize(item.size)}
@@ -180,11 +190,11 @@ export default function ProductDetailsPage() {
               )}
 
               {/* Colors */}
-              {data?.ProductColors?.length > 0 && (
+              {/* {productdata?.product?.ProductColors?.length > 0 && (
                 <div>
                   <h3 className="text-sm font-semibold mb-2">Select Color</h3>
                   <div className="flex gap-3 flex-wrap">
-                  {data?.ProductColors.map((color) => {
+                  {productdata?.product?.ProductColors.map((color : any) => {
       const value = color.hex?.toLowerCase() || color.color?.toLowerCase()
 
     return (
@@ -200,16 +210,16 @@ export default function ProductDetailsPage() {
       title={value} // shows the name/hex on hover
     />
   )
-})}
-
+})} */}
+{/* 
                   </div>
                 </div>
-              )}
+              )} */}
 
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
-                  onClick={handleAddToCart}
+                  onClick={() => addcart(productdata?.product.id, selectedSize)}
                   variant="outline"
                   className="w-full sm:flex-1 border-pink-600 text-pink-600 rounded-full"
                 >
