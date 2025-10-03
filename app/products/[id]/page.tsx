@@ -21,6 +21,7 @@ import endpoints from "@/lib/endpoints/endponts"
 import { useDispatch, useSelector } from "react-redux"
 import { message } from "antd"
 import { se } from "date-fns/locale"
+import { reduxSliceData } from "@/redux/features/reduxData"
 
 
 export default function ProductDetailsPage() {
@@ -73,14 +74,13 @@ export default function ProductDetailsPage() {
     }
   }, [])
 
-
-  
-
      const addcart = async (productid: any , selectedSize :any ) =>{
+
       if(!selectedSize){  
         message.error("Please select a size")
         return;
       }
+      dispatch(reduxSliceData({ key: "cartcall", data: true }));
       const sizename = productdata?.product?.ProductSizes?.filter((item:any)=> item.size === selectedSize)
       const body ={
         userId: userdata?.id,
@@ -93,7 +93,7 @@ export default function ProductDetailsPage() {
      }else{
       message.error(res?.message || "Failed to add product to cart")
      }
-
+      dispatch(reduxSliceData({ key: "cartcall", data: false }));
     }
 
 

@@ -58,6 +58,34 @@ export const getProductById = async (
 
 }
 
+export const getCartData = async (
+    dispatch:AppDispatch,
+    reduxname:string, url:string, body?:any, flag?:boolean)=>{
+    try {
+        const response = await api.post(url, body);
+        if(response.status === 200){
+          
+            dispatch(reduxSliceData({ key: reduxname, data: response?.data }));
+            return {success:true, data:response?.data}
+        }else{
+             const message = errorResponse(response);
+             console.log(message)
+             return {success:false, message}
+        }
+
+
+
+    } catch (err) {
+            const message = errorResponse(err);
+            console.error(" error:", message);
+            return { success: false, message };
+        
+    }
+    
+
+
+}
+
 
 export const addData = async (
  url:string, body?:any, flag?:boolean)=>{
