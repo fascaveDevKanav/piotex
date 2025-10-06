@@ -27,21 +27,22 @@ api.interceptors.request.use((config) =>{
 }
 );
 
-api.interceptors.response.use((response)=> response,
-(error)=>{
-   if(error.response?.status === 401){
-    localStorage.clear();
-    
-    if(typeof window !== 'undefined'){
-        window.location.href = '/login';
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+
+    if (status === 401 || status === 403) {
+      // Clear auth only in browser
+      if (typeof window !== "undefined") {
+        localStorage.clear();
+        window.location.href = "/login";
+      }
     }
-  
-}
 
-return Promise.reject(error);
-
-   
-})
+    return Promise.reject(error);
+  }
+);
 export default api;
 
 

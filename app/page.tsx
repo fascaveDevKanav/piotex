@@ -9,7 +9,11 @@ import Link from "next/link"
 import  {categories}  from "@/lib/data"
 import ProductGrid from "@/components/product/productcard"
 
+
 export default function HomePage() {
+
+ 
+  
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
