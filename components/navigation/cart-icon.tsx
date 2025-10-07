@@ -5,7 +5,7 @@ import { ShoppingCart } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect, useState } from "react"
-import { getCartData, getListData } from "@/lib/customfetch/customFetch"
+import {  getListData } from "@/lib/customfetch/customFetch"
 import endpoints from "@/lib/endpoints/endponts"
 
 export function CartIcon() {
@@ -34,14 +34,14 @@ export function CartIcon() {
       userId: userdata?.id,
     }
     console.log("fetching cart count with body:", body)
-    const res = await getCartData(dispatch, "cartdata", endpoints?.cart.get, body)
+    const res = await getListData(dispatch, "cartdata", endpoints?.cart.get, body)
     console.log("cart count", res)
   }
 
   // Get cart count from Redux
   const { cartdata } = useSelector((state: any) => state?.reduxData?.data)
-
-  const itemCount = cartdata?.totalItems || 0
+  console.log("cartdata in icon", cartdata?.cartItems?.length)
+  const itemCount = cartdata?.cartItems?.length || 0
 
   return (
     <Link

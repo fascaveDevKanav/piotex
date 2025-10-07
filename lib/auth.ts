@@ -29,7 +29,7 @@ export const saveUser = (user: User): void => {
 
 // Remove user from localStorage
 export const removeUser = (): void => {
-  localStorage.removeItem("user")
+  localStorage.clear();
 }
 
 // Check if user is authenticated

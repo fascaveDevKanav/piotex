@@ -7,6 +7,10 @@ import { Card, CardContent } from "@/components/ui/card"
 import { useAuth } from "@/hooks/use-auth"
 import { useEffect, useState } from "react"
 import { OrderSummary } from "@/components/cart/order-summary"
+import api from "@/lib/api/api"
+import endpoints from "@/lib/endpoints/endponts"
+import { useDispatch } from "react-redux"
+import { getListData } from "@/lib/customfetch/customFetch"
 
 // Mock API or local state – replace with your real data fetching
 type CartItem = {
@@ -20,28 +24,15 @@ type CartItem = {
 export default function CartPage() {
   const { isAuthenticated } = useAuth()
   const [cartItems, setCartItems] = useState<CartItem[]>([])
+   const dispatch = useDispatch()
+useEffect(()=> {fetchcart()},[])
 
-  useEffect(() => {
-    if (isAuthenticated) {
-      // Fetch cart items (replace with API call)
-      setCartItems([
-        {
-          id: "1",
-          name: "Pink Hoodie",
-          price: 1299,
-          quantity: 1,
-          image: "/images/hoodie.jpg",
-        },
-        {
-          id: "2",
-          name: "Sneakers",
-          price: 2499,
-          quantity: 2,
-          image: "/images/shoes.jpg",
-        },
-      ])
-    }
-  }, [isAuthenticated])
+  const fetchcart = async() =>{
+    await getListData(dispatch, "cart", endpoints.cart.get)
+
+  }
+ 
+
 
   if (!isAuthenticated) {
     return (
@@ -66,6 +57,10 @@ export default function CartPage() {
     )
   }
 
+
+ 
+
+
   const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
 
   return (
@@ -86,7 +81,7 @@ export default function CartPage() {
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-        
+                  
             </div>
 
             {/* Summary */}

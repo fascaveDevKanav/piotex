@@ -15,7 +15,7 @@ const endpoints ={
     cart:{
         add: 'api/cart/add',
         remove:"api/cart/remove",
-        get:"api/cart/get"
+        get:"api/cart/getall"
     }
 
  
