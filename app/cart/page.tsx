@@ -9,8 +9,9 @@ import { useEffect, useState } from "react"
 import { OrderSummary } from "@/components/cart/order-summary"
 import api from "@/lib/api/api"
 import endpoints from "@/lib/endpoints/endponts"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { getListData } from "@/lib/customfetch/customFetch"
+import { CartItemComponent } from "@/components/cart/cart-item"
 
 // Mock API or local state – replace with your real data fetching
 type CartItem = {
@@ -23,12 +24,13 @@ type CartItem = {
 
 export default function CartPage() {
   const { isAuthenticated } = useAuth()
-  const [cartItems, setCartItems] = useState<CartItem[]>([])
+  const {cartdata} = useSelector((state:any)=> state?.reduxData?.data) 
    const dispatch = useDispatch()
+   const [cartItems, setCartItems] = useState<CartItem[]>(cartdata || [])
 useEffect(()=> {fetchcart()},[])
 
   const fetchcart = async() =>{
-    await getListData(dispatch, "cart", endpoints.cart.get)
+    await getListData(dispatch, "cartdata", endpoints.cart.get)
 
   }
  
@@ -58,11 +60,6 @@ useEffect(()=> {fetchcart()},[])
   }
 
 
- 
-
-
-  const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0)
-
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -70,7 +67,7 @@ useEffect(()=> {fetchcart()},[])
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Cart</h2>
 
-        {cartItems.length === 0 ? (
+        {cartdata?.cartItems.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-gray-500 mb-6">Your cart is empty.</p>
             <Link href="/shop">
@@ -81,7 +78,9 @@ useEffect(()=> {fetchcart()},[])
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-                  
+              {cartdata?.cartItems?.map((item: any) => (
+                <CartItemComponent key={item.id} item={item} />
+              ))}
             </div>
 
             {/* Summary */}
