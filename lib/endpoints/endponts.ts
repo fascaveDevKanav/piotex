@@ -16,6 +16,10 @@ const endpoints ={
         add: 'api/cart/add',
         remove:"api/cart/remove",
         get:"api/cart/getall"
+    },
+    user:{
+        address:"api/address/create",
+        getAddress:"api/address/all"
     }
 
  

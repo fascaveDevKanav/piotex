@@ -5,6 +5,10 @@ import { Input, Select, Button, Card, Typography, Form } from "antd";
 import { UserOutlined, PhoneOutlined, HomeOutlined } from "@ant-design/icons";
 import { Header } from "@/components/layout/header";
 import { Footer } from "@/components/layout/footer";
+import { addData } from "@/lib/customfetch/customFetch";
+import endpoints from "@/lib/endpoints/endponts";
+import { message } from "antd";
+import SavedAddressesPage from "@/components/address-comp";
 
 const { Title } = Typography;
 const { Option } = Select;
@@ -12,27 +16,35 @@ const { Option } = Select;
 export default function AddressPage() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const [refreshAddresses, setRefreshAddresses] = useState(0);
 
   const handleSubmit = async (values: any) => {
-    try {
-      setLoading(true);
-      console.log("Address Submitted:", values);
-      // ✅ Send API request here
-      // await api.post("/user/address", values)
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
+    setLoading(true);
+    console.log(values);
+    const res = await addData(endpoints?.user?.address, values);
+    if (res?.success) {
+      form.resetFields();
+      message.success("Address added successfully");
+      // Trigger refresh of saved addresses
+      setRefreshAddresses((prev) => prev + 1);
+    } else {
+      message.error(res?.message || "Failed to add address");
     }
+    setLoading(false);
   };
+
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div className="min-h-screen bg-gray-50 flex justify-center py-10 px-4 text-gray-700">
-          <Card className="w-full max-w-4xl shadow-lg rounded-2xl border border-pink-100 bg-white">
+        {/* Saved Addresses Section */}
+        <SavedAddressesPage key={refreshAddresses} />
+
+        {/* Add New Address Section */}
+        <div className="mt-8">
+          <Card className="w-full shadow-lg rounded-2xl border border-pink-100 bg-white">
             {/* Header */}
             <div className="flex items-center mb-6">
               <div className="bg-pink-100 text-pink-600 font-semibold rounded-full h-12 w-12 flex items-center justify-center text-xl shadow-sm">
