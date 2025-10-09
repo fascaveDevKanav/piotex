@@ -20,6 +20,9 @@ const endpoints ={
     user:{
         address:"api/address/create",
         getAddress:"api/address/all"
+    },
+    order:{
+        create:"api/order/createOrder"
     }
 
  

@@ -3,12 +3,13 @@ import React, { useEffect, useState } from 'react';
 import { ShoppingBag, User, MapPin, CreditCard, Shield, ChevronDown } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { getListData } from '@/lib/customfetch/customFetch';
+import { addData, getListData } from '@/lib/customfetch/customFetch';
 import { useDispatch, useSelector } from 'react-redux';
 import endpoints from '@/lib/endpoints/endponts';
-
+import {message} from 'antd'
+import { it } from 'node:test';
 export default function CheckoutPage() {
-  const [selectedAddress, setSelectedAddress] = useState('');
+  const [selectedAddress, setSelectedAddress] = useState();
   const [paymentMethod, setPaymentMethod] = useState('cod');
   const [orderNotes, setOrderNotes] = useState('');
   const [showMessage, setShowMessage] = useState(false);
@@ -16,59 +17,54 @@ export default function CheckoutPage() {
   const [messageType, setMessageType] = useState('');
 
   const dispatch = useDispatch()
- const {Address} = useSelector((state:any)=> state?.reduxData?.data)
+ const {Address,cartdata} = useSelector((state:any)=> state?.reduxData?.data)
  useEffect(()=>{
    fetchdata()
  },[])
   const fetchdata = async ()=>{
     await getListData(dispatch, "Address", endpoints?.user?.getAddress )
+    await getListData(dispatch, "cartdata", endpoints.cart.get)
+
   }
 
-  const cartItems = [
-    {
-      id: 1,
-      name: 'Lehnga',
-      size: 'xxl',
-      price: 1200,
-      quantity: 1,
-      total: 14400,
-    },
-    {
-      id: 2,
-      name: 'blouse',
-      size: 'S',
-      price: 2100,
-      quantity: 1,
-      total: 6300,
-    },
-    {
-      id: 3,
-      name: 'Salwar Kurta',
-      size: 'XL',
-      price: 12000,
-      quantity: 1,
-      total: 12000,
-    },
-  ];
+  console.log("cartdata",cartdata)
 
-  const subtotal = 2000;
+  const subtotal = cartdata?.cartItems?.reduce((acc, item) => acc + item?.Product?.price * item?.quantity, 0) || 0;
   const shipping = 0;
-  const tax = 360;
-  const total = 2360;
+  const tax = 0;
+  const total = subtotal + shipping + tax;
 
-  const showToast = (message, type) => {
-    setMessageText(message);
-    setMessageType(type);
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 3000);
-  };
 
-  const handlePlaceOrder = () => {
-    if (!selectedAddress) {
-      showToast('Please select a delivery address', 'error');
-      return;
-    }
-    showToast('Order placed successfully!', 'success');
+  const items = cartdata?.cartItems?.map(item => ({
+    id: item?.Product?.id,
+    name: item?.Product?.name,
+    size: item?.productSize,
+    price: item?.Product?.price,
+    quantity: item?.quantity,
+    total: item?.Product?.price * item?.quantity,
+  })) || [];
+
+  console.log("items",items)
+
+
+  const handlePlaceOrder = async () => {
+  if(!selectedAddress){
+    return message.error("Please select a delivery address")
+  }
+  const body={
+    items: items,
+    shippingAddressId: selectedAddress,
+    billingAddressId: selectedAddress,
+    paymentMethod,
+  }
+ const res=  await addData(endpoints?.order?.create,body)
+ if(res?.success){
+    return message.success("Order placed successfully!")
+ }else{
+  return message.error(res?.message || "Something went wrong, please try again." )
+ }
+
+
   };
 
   return (
@@ -135,10 +131,11 @@ export default function CheckoutPage() {
                     appearance: 'none',
                     outline: 'none'
                   }}
+                  required
                 >
                   <option value="">Select a delivery address</option>
                   { Address?.addresses?.map((addr) => (
-                    <option key={addr.id} value={addr.addressLine1}>
+                    <option key={addr.id} value={addr.id}>
                       {addr.addressLine1}, {addr.city}, {addr.state}, {addr.postalCode}
                     </option>
                   ))}
@@ -175,10 +172,10 @@ export default function CheckoutPage() {
                 fontWeight: 600
               }}>
                 <ShoppingBag size={20} color="#eb2f96" />
-                <span>Order Items ({cartItems.length})</span>
+                <span>Order Items ({cartdata?.cartItems.length})</span>
               </div>
               
-              {cartItems.map((item, index) => (
+              {cartdata?.cartItems.map((item, index) => (
                 <div key={item.id}>
                   <div style={{ 
                     display: 'flex', 
@@ -187,15 +184,15 @@ export default function CheckoutPage() {
                     padding: '12px 0'
                   }}>
                     <div>
-                      <div style={{ fontWeight: 500, fontSize: '16px' }}>{item.name}</div>
-                      <div style={{ color: '#666', fontSize: '14px' }}>Size: {item.size}</div>
+                      <div style={{ fontWeight: 500, fontSize: '16px' }}>{item?.Product?.name}</div>
+                      <div style={{ color: '#666', fontSize: '14px' }}>Size: {item?.productSize}</div>
                     </div>
                     <div style={{ textAlign: 'right' }}>
-                      <div style={{ fontWeight: 600, fontSize: '16px' }}>₹{item.total.toLocaleString()}</div>
-                      <div style={{ color: '#666', fontSize: '14px' }}>₹{item.price.toLocaleString()} x {item.quantity}</div>
+                      <div style={{ fontWeight: 600, fontSize: '16px' }}>₹{item?.Product?.price.toLocaleString()}</div>
+                      <div style={{ color: '#666', fontSize: '14px' }}>₹{item?.Product?.price.toLocaleString()} x {item?.quantity}</div>
                     </div>
                   </div>
-                  {index < cartItems.length - 1 && (
+                  {index < cartdata.length - 1 && (
                     <div style={{ borderBottom: '1px solid #f0f0f0', margin: '8px 0' }} />
                   )}
                 </div>
@@ -218,15 +215,15 @@ export default function CheckoutPage() {
                 fontWeight: 600
               }}>
                 <CreditCard size={20} color="#eb2f96" />
-                <span>Payment Method</span>
+                <span>Payment Method</span> 
               </div>
               
               <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
                 {[
                   { value: 'cod', label: 'Cash on Delivery', desc: 'Pay when you receive your order' },
-                  { value: 'card', label: 'Credit/Debit Card', desc: 'Secure payment via card' },
-                  { value: 'upi', label: 'UPI Payment', desc: 'Pay using UPI apps' },
-                  { value: 'netbanking', label: 'Net Banking', desc: 'Pay via your bank account' }
+                  // { value: 'card', label: 'Credit/Debit Card', desc: 'Secure payment via card' },
+                  // { value: 'upi', label: 'UPI Payment', desc: 'Pay using UPI apps' },
+                  // { value: 'netbanking', label: 'Net Banking', desc: 'Pay via your bank account' }
                 ].map((method) => (
                   <label key={method.value} style={{ display: 'flex', alignItems: 'flex-start', cursor: 'pointer' }}>
                     <input
@@ -246,7 +243,7 @@ export default function CheckoutPage() {
             </div>
 
             {/* Order Notes */}
-            <div style={{
+            {/* <div style={{
               backgroundColor: 'white',
               padding: '24px',
               borderRadius: '8px',
@@ -276,7 +273,7 @@ export default function CheckoutPage() {
                   resize: 'vertical'
                 }}
               />
-            </div>
+            </div> */}
           </div>
 
           {/* Right Column - Order Summary */}
@@ -355,8 +352,8 @@ export default function CheckoutPage() {
                   fontSize: '13px',
                   color: '#666'
                 }}>
-                  <Shield size={16} />
-                  <span>Safe and secure payments. 100% secure transactions.</span>
+                  {/* <Shield size={16} />
+                  <span>Safe and secure payments. 100% secure transactions.</span> */}
                 </div>
               </div>
             </div>
