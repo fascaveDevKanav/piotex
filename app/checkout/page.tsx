@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import endpoints from '@/lib/endpoints/endponts';
 import {message} from 'antd'
 import { it } from 'node:test';
+import { useRouter } from 'next/navigation';
 export default function CheckoutPage() {
   const [selectedAddress, setSelectedAddress] = useState();
   const [paymentMethod, setPaymentMethod] = useState('cod');
@@ -26,7 +27,7 @@ export default function CheckoutPage() {
     await getListData(dispatch, "cartdata", endpoints.cart.get)
 
   }
-
+ const router = useRouter()
   console.log("cartdata",cartdata)
 
   const subtotal = cartdata?.cartItems?.reduce((acc, item) => acc + item?.Product?.price * item?.quantity, 0) || 0;
@@ -59,6 +60,7 @@ export default function CheckoutPage() {
   }
  const res=  await addData(endpoints?.order?.create,body)
  if(res?.success){
+    router.push('/card')
     return message.success("Order placed successfully!")
  }else{
   return message.error(res?.message || "Something went wrong, please try again." )

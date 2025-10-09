@@ -9,11 +9,24 @@ import { Separator } from "@/components/ui/separator"
 import { Package, Calendar, MapPin, CreditCard, Eye } from "lucide-react"
 import { getUserOrders, getOrderStatusColor, formatOrderStatus, type Order } from "@/lib/orders"
 import { useAuth } from "@/hooks/use-auth"
+import { getListData } from "@/lib/customfetch/customFetch"
+import { useDispatch, useSelector } from "react-redux"
+import endpoints from "@/lib/endpoints/endponts"
+import { useEffect } from "react"
 
 export function OrderHistory() {
   const { user } = useAuth()
   const orders = user ? getUserOrders(user.id) : []
+  const dispatch = useDispatch()
+  const { order } = useSelector((state:any) => state?.reduxData?.data)
+  useEffect(()=>{fetchdata()},[])
 
+  const fetchdata =async () =>{
+     await getListData(dispatch , "order", endpoints?.order?.get)
+  }
+  console.log(order?.orders , "orders")
+
+ 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-IN", {
       year: "numeric",
@@ -22,7 +35,7 @@ export function OrderHistory() {
     })
   }
 
-  if (orders.length === 0) {
+  if (order?.orders.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -57,7 +70,7 @@ export function OrderHistory() {
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
-          {orders.map((order) => (
+          {order?.orders?.map((order) => (
             <OrderCard key={order.id} order={order} />
           ))}
         </div>
@@ -81,11 +94,11 @@ function OrderCard({ order }: { order: Order }) {
         {/* Order Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
           <div>
-            <h3 className="font-semibold text-lg">Order #{order.id}</h3>
+            <h3 className="font-semibold text-[10px]">Order #{order.id}</h3>
             <div className="flex items-center gap-4 text-sm text-gray-600 mt-1">
               <span className="flex items-center gap-1">
                 <Calendar className="h-4 w-4" />
-                {formatDate(order.orderDate)}
+                {formatDate(order.createdAt)}
               </span>
               <span className="flex items-center gap-1">
                 <CreditCard className="h-4 w-4" />
@@ -95,25 +108,26 @@ function OrderCard({ order }: { order: Order }) {
           </div>
           <div className="flex items-center gap-3">
             <Badge className={getOrderStatusColor(order.status)}>{formatOrderStatus(order.status)}</Badge>
-            <Button variant="outline" size="sm">
+            {/* <Button variant="outline" size="sm">
               <Eye className="h-4 w-4 mr-2" />
               View Details
-            </Button>
+            </Button> */}
           </div>
         </div>
 
         {/* Order Items */}
         <div className="space-y-3 mb-4">
-          {order.items.map((item, index) => (
+          {order?.orderItems.map((item, index) => (
             <div key={index} className="flex gap-4">
-              <div className="relative w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
-                <Image src={item.image || "/placeholder.svg"} alt={item.name} fill className="object-cover" />
-              </div>
+              {/* <div className="relative w-16 h-16 bg-gray-100 rounded-lg overflow-hidden flex-shrink-0">
+                <Image src={item.image || "/placeholder.svg"} alt={item.productName} fill className="object-cover" />
+              </div> */}
               <div className="flex-1 min-w-0">
                 <Link href={`/products/${item.id}`} className="hover:text-pink-600 transition-colors">
-                  <h4 className="font-medium truncate">{item.name}</h4>
+                  <h4 className="font-medium truncate">{item.productName}</h4>
                 </Link>
-                <p className="text-sm text-gray-600">Size: {item.size}</p>
+                <p className="text-sm text-gray-600">Size: {item.variant
+}</p>
                 <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
               </div>
               <div className="text-right">
@@ -126,7 +140,7 @@ function OrderCard({ order }: { order: Order }) {
         <Separator className="my-4" />
 
         {/* Order Footer */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        {/* <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div className="flex items-start gap-2 text-sm text-gray-600">
             <MapPin className="h-4 w-4 mt-0.5 flex-shrink-0" />
             <div>
@@ -146,10 +160,10 @@ function OrderCard({ order }: { order: Order }) {
               <p className="text-sm text-green-600">Delivered on {formatDate(order.deliveryDate)}</p>
             )}
           </div>
-        </div>
+        </div> */}
 
         {/* Action Buttons */}
-        <div className="flex gap-2 mt-4 pt-4 border-t">
+        {/* <div className="flex gap-2 mt-4 pt-4 border-t">
           {order.status === "delivered" && (
             <>
               <Button variant="outline" size="sm">
@@ -170,7 +184,7 @@ function OrderCard({ order }: { order: Order }) {
               Cancel Order
             </Button>
           )}
-        </div>
+        </div> */}
       </CardContent>
     </Card>
   )

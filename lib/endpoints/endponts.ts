@@ -22,7 +22,8 @@ const endpoints ={
         getAddress:"api/address/all"
     },
     order:{
-        create:"api/order/createOrder"
+        create:"api/order/createOrder",
+        get:"api/order/getOrders"
     }
 
  
