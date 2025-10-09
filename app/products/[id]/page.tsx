@@ -226,9 +226,7 @@ export default function ProductDetailsPage() {
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Add to Cart
                 </Button>
-                <Button className="w-full sm:flex-1 bg-pink-600 text-white rounded-full hover:bg-pink-700">
-                  Buy Now
-                </Button>
+               
               </div>
             </div>
           </div>

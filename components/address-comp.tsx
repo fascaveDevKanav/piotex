@@ -65,7 +65,7 @@ export default function SavedAddressesPage() {
     await getListData(dispatch, "Address", endpoints?.user?.getAddress )
   }
 
-  console.log("address", Address?.addresses?.fullName)
+  
  
 
 

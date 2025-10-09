@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
+import { useRouter } from "next/navigation"
 
 interface OrderSummaryProps {
   onCheckout: () => void
@@ -19,7 +20,7 @@ export function OrderSummary() {
   const tax = Math.round(subtotal * 0.18) // 18% GST
   const finalTotal = subtotal + shipping + tax
   
- 
+ const router = useRouter();
 
 
   return (
@@ -58,7 +59,7 @@ export function OrderSummary() {
           <span>₹{finalTotal.toLocaleString()}</span>
         </div>
 
-        <Button  className="w-full bg-pink-600 hover:bg-pink-700 text-white" size="lg">
+        <Button  className="w-full bg-pink-600 hover:bg-pink-700 text-white" size="lg" onClick={()=>router.push('/checkout') }>
           Proceed to Checkout
         </Button>
       </CardContent>

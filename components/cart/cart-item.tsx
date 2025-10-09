@@ -63,29 +63,12 @@ export function CartItemComponent({ item }:any) {
           </div>
 
           {/* Quantity Controls */}
-          {/* <div className="flex items-center gap-2">
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 bg-transparent"
-              onClick={() => handleQuantityChange(item?.quantity - 1)}
-            >
-              <Minus className="h-3 w-3" />
-            </Button>
-            <span className="w-8 text-center text-sm font-medium">{item?.quantity}</span>
-            <Button
-              variant="outline"
-              size="icon"
-              className="h-8 w-8 bg-transparent"
-              onClick={() => handleQuantityChange(item?.quantity + 1)}
-            >
-              <Plus className="h-3 w-3" />
-            </Button>
-          </div> */}
-
+      
           {/* Total Price */}
-          <div className="text-right">
+          <div className="text-right flex flex-col items-end">
             <p className="text-lg font-semibold text-gray-900">₹{(item?.Product?.price * item.quantity).toLocaleString()}</p>
+         
+            <span className=" flex text-sm text-gray-600 mt-1">Quantity:{item?.quantity}</span>
             <Button
               variant="ghost"
               size="sm"
