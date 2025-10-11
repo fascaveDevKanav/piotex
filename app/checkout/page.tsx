@@ -7,21 +7,40 @@ import { addData, getListData } from '@/lib/customfetch/customFetch';
 import { useDispatch, useSelector } from 'react-redux';
 import endpoints from '@/lib/endpoints/endponts';
 import {message} from 'antd'
-import { it } from 'node:test';
 import { useRouter } from 'next/navigation';
+import pioteximg from "../../public/razorpayimage/Piotex.png"
+// Add Razorpay type to window for TypeScript
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 export default function CheckoutPage() {
   const [selectedAddress, setSelectedAddress] = useState();
   const [paymentMethod, setPaymentMethod] = useState('cod');
-  const [orderNotes, setOrderNotes] = useState('');
   const [showMessage, setShowMessage] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [messageType, setMessageType] = useState('');
 
   const dispatch = useDispatch()
  const {Address,cartdata} = useSelector((state:any)=> state?.reduxData?.data)
+
  useEffect(()=>{
    fetchdata()
  },[])
+
+ const user = localStorage.getItem('user');
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+      message.error("Please login to continue to checkout")
+    }
+  }, [user])
+  
+  console.log("user ", JSON.parse(user || '{}'))
+  
+
   const fetchdata = async ()=>{
     await getListData(dispatch, "Address", endpoints?.user?.getAddress )
     await getListData(dispatch, "cartdata", endpoints.cart.get)
@@ -44,14 +63,15 @@ export default function CheckoutPage() {
     quantity: item?.quantity,
     total: item?.Product?.price * item?.quantity,
   })) || [];
-
-  console.log("items",items)
+  
 
 
   const handlePlaceOrder = async () => {
   if(!selectedAddress){
     return message.error("Please select a delivery address")
   }
+  
+  if(paymentMethod === 'cod'){
   const body={
     items: items,
     shippingAddressId: selectedAddress,
@@ -60,14 +80,58 @@ export default function CheckoutPage() {
   }
  const res=  await addData(endpoints?.order?.create,body)
  if(res?.success){
-    router.push('/card')
+    router.push('/cart')
     return message.success("Order placed successfully!")
  }else{
   return message.error(res?.message || "Something went wrong, please try again." )
  }
+  }
+  else{
+    //  //  razorpay payment
+    console.log("upi payment")
+    const options ={
+    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, 
+         amount: 200*1000,
+         currency: "INR",
+         name: "Piotex",
+         description: "Purchase Product",
+         image: pioteximg.src,
+         handler: function (response) {
+          message.success("Payment successful!")
+          console.log(response);
+          // alert(response.razorpay_payment_id);
+           // You can now verify the payment on your backend
+         },
+         prefill: {
+           name: JSON.parse(user || '{}')?.name || "Customer Name",
+           email: JSON.parse(user || '{}')?.email || "customer@example.com",
+           contact: JSON.parse(user || '{}')?.number || "9999999999",
+         },
+         notes: {
+           address: "Customer Address",
+         },
+         theme: {
+           color: "#eb2f96",
+         },
+       };
 
-
+       const razorpay = new window.Razorpay(options);
+       razorpay.open();
+  }
   };
+
+  useEffect(()=>{
+   const script = document.createElement('script');
+   script.src='https://checkout.razorpay.com/v1/checkout.js';
+   script.async=true;
+   document.body.appendChild(script);
+  },[])
+
+
+
+
+
+
 
   return (
     <div style={{ minHeight: '100vh', backgroundColor: '#f5f5f5' }}>
@@ -224,7 +288,7 @@ export default function CheckoutPage() {
                 {[
                   { value: 'cod', label: 'Cash on Delivery', desc: 'Pay when you receive your order' },
                   // { value: 'card', label: 'Credit/Debit Card', desc: 'Secure payment via card' },
-                  // { value: 'upi', label: 'UPI Payment', desc: 'Pay using UPI apps' },
+                  { value: 'upi', label: 'UPI Payment', desc: 'Pay using UPI apps' },
                   // { value: 'netbanking', label: 'Net Banking', desc: 'Pay via your bank account' }
                 ].map((method) => (
                   <label key={method.value} style={{ display: 'flex', alignItems: 'flex-start', cursor: 'pointer' }}>
@@ -337,9 +401,11 @@ export default function CheckoutPage() {
                     borderRadius: '6px',
                     cursor: 'pointer',
                     marginTop: '8px'
+                    
                   }}
                   onMouseOver={(e) => e.target.style.backgroundColor = '#c41d7f'}
                   onMouseOut={(e) => e.target.style.backgroundColor = '#eb2f96'}
+                  className='cursor-pointer'
                 >
                   Place Order
                 </button>
@@ -354,8 +420,8 @@ export default function CheckoutPage() {
                   fontSize: '13px',
                   color: '#666'
                 }}>
-                  {/* <Shield size={16} />
-                  <span>Safe and secure payments. 100% secure transactions.</span> */}
+                  <Shield size={16} />
+                  <span>Safe and secure payments. 100% secure transactions.</span> 
                 </div>
               </div>
             </div>
