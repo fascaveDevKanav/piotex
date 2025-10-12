@@ -71,7 +71,7 @@ export default function CheckoutPage() {
     return message.error("Please select a delivery address")
   }
   
-  if(paymentMethod === 'cod'){
+  
   const body={
     items: items,
     shippingAddressId: selectedAddress,
@@ -79,28 +79,33 @@ export default function CheckoutPage() {
     paymentMethod,
   }
  const res=  await addData(endpoints?.order?.create,body)
- if(res?.success){
-    router.push('/cart')
-    return message.success("Order placed successfully!")
- }else{
-  return message.error(res?.message || "Something went wrong, please try again." )
- }
-  }
-  else{
+ console.log("order response",res)
+ if(res?.data.paymentMethod === "upi" && res?.success){
+    console.log("order placed",res)
     //  //  razorpay payment
-    console.log("upi payment")
+   
     const options ={
-    key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID, 
-         amount: 200*1000,
+         key: res?.data?.key, 
+         amount: res?.data?.amount* 100,
+         order_id: res?.data?.razorpayOrderId,
          currency: "INR",
          name: "Piotex",
          description: "Purchase Product",
          image: pioteximg.src,
-         handler: function (response) {
-          message.success("Payment successful!")
-          console.log(response);
-          // alert(response.razorpay_payment_id);
-           // You can now verify the payment on your backend
+         handler: async function (response:any) {
+           await addData(endpoints?.order?.verifypayment, {
+             response,
+           }).then((res) => {
+            if(res?.success){
+              message.success("Payment successful, order placed!" )
+              router.push('/orders')
+            }
+           }).catch((err) => {
+             console.log(err);
+             message.error("Payment verification failed, please contact support." )
+           });
+
+
          },
          prefill: {
            name: JSON.parse(user || '{}')?.name || "Customer Name",
@@ -117,8 +122,22 @@ export default function CheckoutPage() {
 
        const razorpay = new window.Razorpay(options);
        razorpay.open();
-  }
+ }
+ else if(res?.data?.paymentMethod === "cod" && res?.success){
+  message.success("Order placed successfully!" )
+  router.push('/orders')
+
+ }
+   
+ else{
+  return message.error(res?.message || "Something went wrong, please try again." )
+ }
   };
+
+
+ 
+
+
 
   useEffect(()=>{
    const script = document.createElement('script');

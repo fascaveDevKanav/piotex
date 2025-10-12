@@ -1,3 +1,5 @@
+import { verify } from "crypto";
+
 const endpoints ={
 
     auth:{
@@ -23,7 +25,8 @@ const endpoints ={
     },
     order:{
         create:"api/order/createOrder",
-        get:"api/order/getOrders"
+        get:"api/order/getOrders",
+        verifypayment:"api/order/verifyPayment"
     }
 
  
