@@ -1,11 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, Menu,  } from 'lucide-react';
-import { AllCategories } from '@/lib/data';
-import Link from 'next/link';
 import endpoints from '@/lib/endpoints/endponts';
-import { Allproducts } from '@/lib/products';
 import { useRouter } from 'next/navigation';
 import { useProduct } from '@/hooks/usedata-product';
+import { getListData } from '@/lib/customfetch/customFetch';
+import { useDispatch, useSelector } from 'react-redux';
 
 const MegaMenu = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -39,23 +38,18 @@ const MegaMenu = () => {
   }, []);
 
   useEffect(()=>{
-   const fetchCategories = async () => {
-    const data = await AllCategories();
-    setCategoriesData(data?.categories);
-   }
-   fetchCategories()
+  fetchCategories()
   },[])
+
+  const {categories} = useSelector((state:any)=> state?.reduxData?.data)
   
-
-
+ const dispatch = useDispatch()
+  const fetchCategories = async()=>{
+    await getListData(dispatch, "categories", endpoints?.categories?.getAllcategories)
+  }
   const handleClickCateory = async(id:any)=>{
-    const data = await Allproducts(id);
-    setIsOpen(false)
-    setProductData(data?.products)
-    router.push(`/products`)
-  
-   
 
+     router.push(`/product_filter?categoryId=${id}`)
   }
   return (
     <header >
@@ -79,7 +73,7 @@ const MegaMenu = () => {
                 <div className="absolute left-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl w-[800px] z-50 transition-all duration-200 ease-out opacity-100 scale-100">
                   <div className="p-6">
                     <div className="grid grid-cols-4 gap-6">
-                      {categoriesData?.map((category: any) => (
+                      {categories?.categories?.map((category: any) => (
                         <button onClick={()=> {handleClickCateory(category?.id)}} key={category?.id} className="group cursor-pointer">
                        <div className="relative mb-3 overflow-hidden rounded-lg">
                       <img
