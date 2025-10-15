@@ -26,7 +26,9 @@ const endpoints ={
     order:{
         create:"api/order/createOrder",
         get:"api/order/getOrders",
-        verifypayment:"api/order/verifyPayment"
+        verifypayment:"api/order/verifyPayment",
+        applyCoupon:"api/order/applyCoupon",
+        getDiscount:"api/order/getdiscount"
     }
 
  

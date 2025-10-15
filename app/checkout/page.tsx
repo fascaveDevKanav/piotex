@@ -24,7 +24,8 @@ export default function CheckoutPage() {
   const [messageType, setMessageType] = useState('');
 
   const dispatch = useDispatch()
- const {Address,cartdata} = useSelector((state:any)=> state?.reduxData?.data)
+ const {Address,cartdata,discount} = useSelector((state:any)=> state?.reduxData?.data)
+ console.log(discount?.coupon,"discount")
 
  useEffect(()=>{
    fetchdata()
@@ -44,6 +45,7 @@ export default function CheckoutPage() {
   const fetchdata = async ()=>{
     await getListData(dispatch, "Address", endpoints?.user?.getAddress )
     await getListData(dispatch, "cartdata", endpoints.cart.get)
+    await getListData(dispatch, "discount", endpoints?.order?.getDiscount)
 
   }
  const router = useRouter()
@@ -52,7 +54,8 @@ export default function CheckoutPage() {
   const subtotal = cartdata?.cartItems?.reduce((acc, item) => acc + item?.Product?.price * item?.quantity, 0) || 0;
   const shipping = 0;
   const tax = 0;
-  const total = subtotal + shipping + tax;
+  const discountAmount = discount?.coupon?.couponAmount || 0;
+  const total = subtotal + shipping + tax - discountAmount;
 
 
   const items = cartdata?.cartItems?.map(item => ({
@@ -383,6 +386,10 @@ export default function CheckoutPage() {
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
                   <span style={{ color: '#666' }}>Subtotal (2 items)</span>
                   <span style={{ fontWeight: 500 }}>₹{subtotal.toLocaleString()}</span>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
+                  <span style={{ color: '#666' }}>Discount</span>
+                  <span style={{ fontWeight: 500 }}>₹{discount?.coupon?.couponAmount?.toLocaleString() || 0}</span>
                 </div>
                 
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
