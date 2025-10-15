@@ -1,40 +1,46 @@
-"use client"
-import Link from "next/link"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
-import { Button } from "@/components/ui/button"
-import { Card, CardContent } from "@/components/ui/card"
-import { useAuth } from "@/hooks/use-auth"
-import { useEffect, useState } from "react"
-import { OrderSummary } from "@/components/cart/order-summary"
-import api from "@/lib/api/api"
-import endpoints from "@/lib/endpoints/endponts"
-import { useDispatch, useSelector } from "react-redux"
-import { getListData } from "@/lib/customfetch/customFetch"
-import { CartItemComponent } from "@/components/cart/cart-item"
+"use client";
 
-// Mock API or local state – replace with your real data fetching
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Header } from "@/components/layout/header";
+import { Footer } from "@/components/layout/footer";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { OrderSummary } from "@/components/cart/order-summary";
+import { CartItemComponent } from "@/components/cart/cart-item";
+import ApplyCoupon from "@/components/apply-coupon";
+import { useAuth } from "@/hooks/use-auth";
+import { getListData } from "@/lib/customfetch/customFetch";
+import endpoints from "@/lib/endpoints/endponts";
+
 type CartItem = {
-  id: string
-  name: string
-  price: number
-  quantity: number
-  image: string
-}
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+  image: string;
+};
 
 export default function CartPage() {
-  const { isAuthenticated } = useAuth()
-  const {cartdata} = useSelector((state:any)=> state?.reduxData?.data) 
-   const dispatch = useDispatch()
-   const [cartItems, setCartItems] = useState<CartItem[]>(cartdata || [])
-useEffect(()=> {fetchcart()},[])
+  const { isAuthenticated } = useAuth();
+  const { cartdata } = useSelector((state: any) => state?.reduxData?.data || {});
+  const dispatch = useDispatch();
+  const [cartItems, setCartItems] = useState<CartItem[]>(cartdata?.cartItems || []);
 
-  const fetchcart = async() =>{
-    await getListData(dispatch, "cartdata", endpoints.cart.get)
+  useEffect(() => {
+    fetchCart();
+  }, []);
 
-  }
- 
+  const fetchCart = async () => {
+    await getListData(dispatch, "cartdata", endpoints.cart.get);
+  };
 
+  useEffect(() => {
+    if (cartdata?.cartItems) {
+      setCartItems(cartdata.cartItems);
+    }
+  }, [cartdata]);
 
   if (!isAuthenticated) {
     return (
@@ -48,7 +54,7 @@ useEffect(()=> {fetchcart()},[])
                 <Button className="w-full bg-pink-600 hover:bg-pink-700">Sign In</Button>
               </Link>
               <Link href="/signup">
-                <Button variant="outline" className="w-full bg-transparent">
+                <Button variant="outline" className="w-full">
                   Create Account
                 </Button>
               </Link>
@@ -56,18 +62,17 @@ useEffect(()=> {fetchcart()},[])
           </CardContent>
         </Card>
       </div>
-    )
+    );
   }
 
-
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Cart</h2>
 
-        {cartdata?.cartItems.length === 0 ? (
+        {!cartItems || cartItems.length === 0 ? (
           <div className="text-center py-20">
             <p className="text-gray-500 mb-6">Your cart is empty.</p>
             <Link href="/shop">
@@ -78,19 +83,21 @@ useEffect(()=> {fetchcart()},[])
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {cartdata?.cartItems?.map((item: any) => (
+              {cartItems.map((item: any) => (
                 <CartItemComponent key={item.id} item={item} />
               ))}
             </div>
 
-            {/* Summary */}
-            
-            <OrderSummary/>
+            {/* Sidebar Summary */}
+            <div className="space-y-4">
+              <ApplyCoupon />
+              <OrderSummary />
+            </div>
           </div>
         )}
       </main>
 
       <Footer />
     </div>
-  )
+  );
 }
