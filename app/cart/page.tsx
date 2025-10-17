@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { OrderSummary } from "@/components/cart/order-summary";
 import { CartItemComponent } from "@/components/cart/cart-item";
-import ApplyCoupon from "@/components/apply-coupon";
 import { useAuth } from "@/hooks/use-auth";
 import { getListData } from "@/lib/customfetch/customFetch";
 import endpoints from "@/lib/endpoints/endponts";
@@ -69,7 +68,7 @@ export default function CartPage() {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
 
-      <main className="flex-1 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1   px-4 sm:px-6 lg:px-8 py-8 px-10">
         <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Cart</h2>
 
         {!cartItems || cartItems.length === 0 ? (
@@ -90,7 +89,7 @@ export default function CartPage() {
 
             {/* Sidebar Summary */}
             <div className="space-y-4">
-              <ApplyCoupon />
+              
               <OrderSummary />
             </div>
           </div>

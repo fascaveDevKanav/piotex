@@ -9,6 +9,7 @@ import endpoints from '@/lib/endpoints/endponts';
 import {message} from 'antd'
 import { useRouter } from 'next/navigation';
 import pioteximg from "../../public/razorpayimage/Piotex.png"
+import ApplyCoupon from '@/components/apply-coupon';
 // Add Razorpay type to window for TypeScript
 declare global {
   interface Window {
@@ -366,6 +367,7 @@ export default function CheckoutPage() {
 
           {/* Right Column - Order Summary */}
           <div>
+            <ApplyCoupon />
             <div style={{
               backgroundColor: 'white',
               padding: '24px',

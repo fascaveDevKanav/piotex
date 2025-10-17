@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Separator } from "@/components/ui/separator"
 import { useRouter } from "next/navigation"
+import { useSelector } from "react-redux"
+import { ca } from "date-fns/locale"
 
 interface OrderSummaryProps {
   onCheckout: () => void
@@ -11,13 +13,14 @@ interface OrderSummaryProps {
 
 export function OrderSummary() {
 
-
-  const total = 2000;
-  const itemCount = 2;
+ const { cartdata } = useSelector((state: any) => state?.reduxData?.data || {});
+ const calculate = cartdata?.cartItems?.reduce((acc: number, item: any) => acc + item?.Product?.price * item.quantity, 0) || 0;
+  const total = calculate;
+  const itemCount = cartdata?.cartItems.length;
   
   const subtotal = total
   const shipping = subtotal >= 999 ? 0 : 99
-  const tax = Math.round(subtotal * 0.18) // 18% GST
+  const tax = 0;
   const finalTotal = subtotal + shipping + tax
   
  const router = useRouter();
@@ -33,16 +36,6 @@ export function OrderSummary() {
           <div className="flex justify-between text-sm">
             <span>Subtotal ({itemCount} items)</span>
             <span>₹{subtotal.toLocaleString()}</span>
-          </div>
-
-          <div className="flex justify-between text-sm">
-            <span>Shipping</span>
-            <span className={shipping === 0 ? "text-green-600" : ""}>{shipping === 0 ? "FREE" : `₹${shipping}`}</span>
-          </div>
-
-          <div className="flex justify-between text-sm">
-            <span>Tax (GST 18%)</span>
-            <span>₹{tax.toLocaleString()}</span>
           </div>
 
           {shipping === 0 && subtotal < 999 && <p className="text-xs text-green-600">You saved ₹99 on shipping!</p>}
