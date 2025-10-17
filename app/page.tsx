@@ -9,35 +9,50 @@ import Link from "next/link"
 import  {categories}  from "@/lib/data"
 import ProductGrid from "@/components/product/productcard"
 import { InfiniteSlider } from "@/components/ui/infinite-slider"
-
-
+import CouponBanner from "@/components/coupon-banner"
+import BannerImage from "../public/BannerImage.jpg"
+import Image from "next/image"
+import HeroBanner from "@/components/herobanner"
+import Bg from "@/public/Bg.jpg"
 export default function HomePage() {
 
  
-  
+  const couponcode = "PIOTEX2024"
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
-        <div className="relative bg-gradient-to-r from-pink-500 to-purple-600 rounded-2xl overflow-hidden mb-12">
-          <div className="absolute inset-0 bg-black/20"></div>
-          <div className="relative px-8 py-16 text-center text-white">
-            <h1 className="text-4xl md:text-6xl font-bold mb-4 text-balance">Discover Your Style</h1>
-            <p className="text-lg md:text-xl mb-8 text-pretty max-w-2xl mx-auto">
-              Explore our curated collection of the latest trends in women's fashion
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/products">
-                <Button size="lg" className="bg-white text-pink-600 hover:bg-gray-100 px-8 py-3 text-lg">
-                  Shop Now
-                </Button>
-              </Link>
+        {/* coupon */}
+        <div className="-mt-6 flex justify-end">
+          <CouponBanner
          
-            </div>
-          </div>
+         messages={[`Sale use this coupon ${couponcode} code. Get 50% off on all products!`]}
+         backgroundColor="#ff4081"
+                textColor="#000000"
+          />
+
         </div>
+
+
+        {/* Image Banner */}
+    <div 
+      className={`w-full rounded-lg overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300 mb-5`}
+      
+    >
+
+      <Image
+      src={BannerImage}
+      alt="Banner"
+      className="w-full h-auto object-cover"
+      />
+    </div>
+ 
+        <HeroBanner
+         backgroundImage={Bg.src}
+
+         />
 
         {/* Featured Categories */}
         <div className="mb-12">
