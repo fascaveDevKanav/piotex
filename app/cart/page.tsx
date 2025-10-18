@@ -12,6 +12,7 @@ import { CartItemComponent } from "@/components/cart/cart-item";
 import { useAuth } from "@/hooks/use-auth";
 import { getListData } from "@/lib/customfetch/customFetch";
 import endpoints from "@/lib/endpoints/endponts";
+import { ShoppingBag } from "lucide-react";
 
 type CartItem = {
   id: string;
@@ -43,54 +44,89 @@ export default function CartPage() {
 
   if (!isAuthenticated) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-pink-50 to-purple-50 p-4">
-        <Card className="w-full max-w-md text-center">
-          <CardContent className="p-6">
-            <h1 className="text-2xl font-bold text-pink-600 mb-4">Please Sign In</h1>
-            <p className="text-gray-600 mb-6">You need to be signed in to view your cart.</p>
-            <div className="flex flex-col gap-3">
-              <Link href="/login">
-                <Button className="w-full bg-pink-600 hover:bg-pink-700">Sign In</Button>
-              </Link>
-              <Link href="/signup">
-                <Button variant="outline" className="w-full">
-                  Create Account
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
+      <div className="min-h-screen flex flex-col">
+        <Header />
+        <div className="flex-1 flex items-center justify-center bg-gradient-to-br from-gray-50 to-purple-50/30 p-4">
+          <Card className="w-full max-w-md text-center border-[#eb2f96]/20 shadow-xl">
+            <CardContent className="p-8">
+              <div className="bg-gradient-to-br from-[#eb2f96]/10 to-purple-100/50 rounded-full w-20 h-20 flex items-center justify-center mx-auto mb-4">
+                <ShoppingBag className="h-10 w-10 text-[#eb2f96]" />
+              </div>
+              <h1 className="text-2xl font-bold text-gray-900 mb-2">Please Sign In</h1>
+              <p className="text-gray-600 mb-6">You need to be signed in to view your cart.</p>
+              <div className="flex flex-col gap-3">
+                <Link href="/login">
+                  <Button className="w-full bg-[#eb2f96] hover:bg-[#d91d7f] text-white shadow-lg shadow-[#eb2f96]/20">
+                    Sign In
+                  </Button>
+                </Link>
+                <Link href="/signup">
+                  <Button variant="outline" className="w-full border-[#eb2f96]/30 text-gray-700 hover:bg-[#eb2f96]/5">
+                    Create Account
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        <Footer />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50 flex flex-col">
       <Header />
 
-      <main className="flex-1   px-4 sm:px-6 lg:px-8 py-8 px-10">
-        <h2 className="text-2xl font-bold text-gray-800 mb-6">Your Cart</h2>
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="mb-8">
+          <h2 className="text-3xl font-bold text-gray-900 mb-2">Shopping Cart</h2>
+          <p className="text-gray-600">
+            {cartItems?.length > 0 ? `${cartItems.length} item${cartItems.length > 1 ? 's' : ''} in your cart` : 'Your cart is empty'}
+          </p>
+        </div>
 
         {!cartItems || cartItems.length === 0 ? (
-          <div className="text-center py-20">
-            <p className="text-gray-500 mb-6">Your cart is empty.</p>
-            <Link href="/shop">
-              <Button className="bg-pink-600 hover:bg-pink-700">Start Shopping</Button>
-            </Link>
-          </div>
+          <Card className="border-[#eb2f96]/20 shadow-lg">
+            <CardContent className="text-center py-16 px-4">
+              <div className="bg-gradient-to-br from-[#eb2f96]/10 to-purple-100/50 rounded-full w-24 h-24 flex items-center justify-center mx-auto mb-6">
+                <ShoppingBag className="h-12 w-12 text-[#eb2f96]" />
+              </div>
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Your cart is empty</h3>
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                Looks like you haven't added anything to your cart yet. Start shopping to fill it up!
+              </p>
+              <Link href="/shop">
+                <Button className="bg-[#eb2f96] hover:bg-[#d91d7f] text-white shadow-lg shadow-[#eb2f96]/20 px-8">
+                  Start Shopping
+                </Button>
+              </Link>
+            </CardContent>
+          </Card>
         ) : (
-          <div className="grid lg:grid-cols-3 gap-8">
+          <div className="grid lg:grid-cols-3 gap-6 lg:gap-8">
             {/* Cart Items */}
             <div className="lg:col-span-2 space-y-4">
-              {cartItems.map((item: any) => (
-                <CartItemComponent key={item.id} item={item} />
-              ))}
+              <Card className="border-[#eb2f96]/20 shadow-md">
+                <CardContent className="p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
+                    <ShoppingBag className="h-5 w-5 text-[#eb2f96]" />
+                    Cart Items
+                  </h3>
+                  <div className="space-y-4">
+                    {cartItems.map((item: any) => (
+                      <CartItemComponent key={item.id} item={item} />
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
             </div>
 
             {/* Sidebar Summary */}
-            <div className="space-y-4">
-              
-              <OrderSummary />
+            <div className="lg:col-span-1">
+              <div className="sticky top-4">
+                <OrderSummary />
+              </div>
             </div>
           </div>
         )}
