@@ -35,18 +35,18 @@ export default function CheckoutPage() {
    dispatch(reduxSliceData({key:"couponApplied", data: false}))
  },[couponApplied])
 
- const user = localStorage.getItem('user');
+
+ const [user, setUser] = useState<any>(null);
+
   useEffect(() => {
-    if (!user) {
+    const userData = localStorage.getItem('user');
+    setUser(userData);
+    
+    if (!userData) {
       router.push('/login');
       message.error("Please login to continue to checkout")
     }
-
-    
-  }, [user]);
-  
-  console.log("user ", JSON.parse(user || '{}'))
-  
+  }, []);
 
   const fetchdata = async ()=>{
     await getListData(dispatch, "Address", endpoints?.user?.getAddress )
@@ -89,8 +89,8 @@ export default function CheckoutPage() {
   }
  const res=  await addData(endpoints?.order?.create,body)
  console.log("order response",res)
- if(res?.data.paymentMethod === "upi" && res?.success){
-    console.log("order placed",res)
+ if(res?.data?.paymentMethod === "upi" && res?.success){
+
     //  //  razorpay payment
    
     const options ={
@@ -131,6 +131,8 @@ export default function CheckoutPage() {
 
        const razorpay = new window.Razorpay(options);
        razorpay.open();
+
+       
  }
  else if(res?.data?.paymentMethod === "cod" && res?.success){
   message.success("Order placed successfully!" )
