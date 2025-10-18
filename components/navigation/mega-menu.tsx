@@ -1,102 +1,149 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { ChevronDown, Menu,  } from 'lucide-react';
-import endpoints from '@/lib/endpoints/endponts';
-import { useRouter } from 'next/navigation';
-import { useProduct } from '@/hooks/usedata-product';
-import { getListData } from '@/lib/customfetch/customFetch';
-import { useDispatch, useSelector } from 'react-redux';
+"use client"
+
+import React, { useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
+import endpoints from "@/lib/endpoints/endponts"
+import { useDispatch, useSelector } from "react-redux"
+import { getListData } from "@/lib/customfetch/customFetch"
 
 const MegaMenu = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const menuRef = useRef(null);
-  const [categoriesData, setCategoriesData] = useState([])
   const router = useRouter()
-  const {setProductData}= useProduct()
-  // Close menu when clicking outside
+  const dispatch = useDispatch()
+  const scrollRef = useRef<HTMLDivElement>(null)
+  const [showLeftFade, setShowLeftFade] = useState(false)
+  const [showRightFade, setShowRightFade] = useState(false)
+
+  const { categories } = useSelector((state: any) => state?.reduxData?.data)
+
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (menuRef.current && !menuRef.current.contains(event.target)) {
-        setIsOpen(false);
-      }
-    };
+    fetchCategories()
+  }, [])
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Close mobile menu on resize
-  useEffect(() => {
-    const handleResize = () => {
-      if (window.innerWidth >= 1024) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useEffect(()=>{
-  fetchCategories()
-  },[])
-
-  const {categories} = useSelector((state:any)=> state?.reduxData?.data)
-  
- const dispatch = useDispatch()
-  const fetchCategories = async()=>{
+  const fetchCategories = async () => {
     await getListData(dispatch, "categories", endpoints?.categories?.getAllcategories)
   }
-  const handleClickCateory = async(id:any)=>{
 
-     router.push(`/product_filter?categoryId=${id}`)
+  const handleClickCategory = (id: any) => {
+    router.push(`/product_filter?categoryId=${id}`)
   }
+
+  const scrollLeft = () => {
+    scrollRef.current?.scrollBy({ left: -250, behavior: "smooth" })
+  }
+
+  const scrollRight = () => {
+    scrollRef.current?.scrollBy({ left: 250, behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    const scrollEl = scrollRef.current
+    if (!scrollEl) return
+
+    const handleScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = scrollEl
+      setShowLeftFade(scrollLeft > 0)
+      setShowRightFade(scrollLeft + clientWidth < scrollWidth - 5)
+    }
+
+    handleScroll()
+    scrollEl.addEventListener("scroll", handleScroll)
+
+    const resizeObserver = new ResizeObserver(handleScroll)
+    resizeObserver.observe(scrollEl)
+
+    return () => {
+      scrollEl.removeEventListener("scroll", handleScroll)
+      resizeObserver.disconnect()
+    }
+  }, [categories])
+
   return (
-    <header >
-  
-            {/* All Categories Mega Menu */}
-            <div className="relative" ref={menuRef}>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="bg-pink-600 hover:bg-pink-700 text-white font-medium px-6 py-2.5 rounded-lg transition-all duration-200 flex items-center space-x-2 shadow-md hover:shadow-lg"
-              >
-                <Menu className="h-4 w-4" />
-                <span>All Categories</span>
-                <ChevronDown
-                  className={`h-4 w-4 transition-transform duration-200 ${
-                    isOpen ? 'rotate-180' : ''
-                  }`}
+    <div className="relative w-full bg-white shadow-sm py-3">
+      <div className="relative flex items-center justify-center">
+        {/* Left Scroll Button */}
+        {showLeftFade && (
+          <button
+            onClick={scrollLeft}
+            className="absolute left-2 z-20 bg-white/70 hover:bg-white text-pink-600 rounded-full p-2 shadow-sm hover:shadow-md border border-pink-100 transition-all duration-200 hover:scale-110"
+            aria-label="Scroll Left"
+          >
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.3} d="M15 19l-7-7 7-7" />
+            </svg>
+          </button>
+        )}
+
+        {/* Scrollable Categories */}
+        <div
+          ref={scrollRef}
+          className="flex gap-4 overflow-x-auto scrollbar-hide px-10 scroll-smooth"
+        >
+          {categories?.categories?.map((category: any) => (
+            <button
+              key={category?.id}
+              onClick={() => handleClickCategory(category?.id)}
+              className="flex-shrink-0 flex flex-col items-center w-16 sm:w-20 group"
+            >
+              <div className="w-full aspect-square rounded-md overflow-hidden bg-gray-50 border border-gray-200 shadow-sm hover:shadow-md transition-all duration-300 group-hover:border-pink-300">
+                <img
+                  src={`${process.env.NEXT_PUBLIC_API_BASE_URL}uploads/${category?.image}`}
+                  alt={category?.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                 />
-              </button>
+              </div>
+              <p className="text-[10px] sm:text-xs font-medium text-gray-700 mt-1.5 group-hover:text-pink-600 text-center truncate w-full">
+                {category?.name}
+              </p>
+            </button>
+          ))}
+        </div>
 
-              {isOpen && (
-                <div className="absolute left-0 top-full mt-2 bg-white border border-gray-200 rounded-xl shadow-2xl w-[800px] z-50 transition-all duration-200 ease-out opacity-100 scale-100">
-                  <div className="p-6">
-                    <div className="grid grid-cols-4 gap-6">
-                      {categories?.categories?.map((category: any) => (
-                        <button onClick={()=> {handleClickCateory(category?.id)}} key={category?.id} className="group cursor-pointer">
-                       <div className="relative mb-3 overflow-hidden rounded-lg">
-                      <img
-                        src={`${process.env.NEXT_PUBLIC_API_BASE_URL}uploads/${category?.image}`}
-                          alt={category?.name}
-                            className="w-full h-32 object-cover transition-transform duration-300 group-hover:scale-110"
-                               />
-                              </div>
+        {/* Right Scroll Button */}
+        {showRightFade && (
+          <button
+            onClick={scrollRight}
+            className="absolute right-2 z-20 bg-white/70 hover:bg-white text-pink-600 rounded-full p-2 shadow-sm hover:shadow-md border border-pink-100 transition-all duration-200 hover:scale-110"
+            aria-label="Scroll Right"
+          >
+            <svg
+              className="w-3.5 h-3.5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.3} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+      </div>
 
-                          <h3 className="font-semibold text-gray-900 mb-2 group-hover:text-pink-600 transition-colors">
-                            {category.name}
-                          </h3>
-                          
-                        </button>
-                      ))}
-                    </div>
-                
-                  </div>
-                </div>
-              )}
-            </div>    
-    </header>
-  );
-};
+      {/* Left Fade */}
+      {showLeftFade && (
+        <div className="pointer-events-none absolute top-0 left-0 h-full w-10 bg-gradient-to-r from-white via-white/70 to-transparent z-10" />
+      )}
 
-export default MegaMenu;
+      {/* Right Fade */}
+      {showRightFade && (
+        <div className="pointer-events-none absolute top-0 right-0 h-full w-10 bg-gradient-to-l from-white via-white/70 to-transparent z-10" />
+      )}
+
+      {/* Hide Scrollbar */}
+      <style jsx>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-hide {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
+    </div>
+  )
+}
+
+export default MegaMenu

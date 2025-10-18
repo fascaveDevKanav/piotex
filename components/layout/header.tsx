@@ -28,7 +28,7 @@ export function Header() {
           {/* Logo */}
           <Link href="/" className="flex items-center">
             <ShoppingBag className="h-8 w-8 text-pink-600" />
-            <span className="ml-2 text-xl font-bold text-gray-900"> Ladies Wear</span>
+            <span className="ml-2 text-xl font-bold text-gray-900"> RWear</span>
           </Link>
 
 
@@ -39,7 +39,7 @@ export function Header() {
 
             {/* User Menu */}
 
- {isAuthenticated ? (
+                  {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
@@ -75,16 +75,13 @@ export function Header() {
               </div>
             )}
 
-            {/* Mobile menu button */}
-            <Button variant="ghost" size="sm" className="md:hidden" onClick={() => setMobileMenuOpen(!mobileMenuOpen)}>
-              <Menu className="h-5 w-5" />
-            </Button>
+          
           </div>
         </div>
 
         {/* Desktop Navigation */}
    
-          <div className="hidden md:block border-t border-gray-200">
+          <div className=" border-t border-gray-200">
             <div className="py-4">
               <MegaMenu />
             </div>
@@ -98,31 +95,7 @@ export function Header() {
           </div>
         )} */}
 
-        {/* Mobile Navigation */}
-        {isAuthenticated && mobileMenuOpen && (
-          <div className="md:hidden border-t border-gray-200 py-4">
-            <nav className="space-y-4">
-              <Link href="/products?category=sarees" className="block text-gray-700 hover:text-pink-600 font-medium">
-                Sarees
-              </Link>
-              <Link href="/products?category=kurtis" className="block text-gray-700 hover:text-pink-600 font-medium">
-                Kurtis
-              </Link>
-              <Link href="/products?category=dresses" className="block text-gray-700 hover:text-pink-600 font-medium">
-                Dresses
-              </Link>
-              <Link
-                href="/products?category=accessories"
-                className="block text-gray-700 hover:text-pink-600 font-medium"
-              >
-                Accessories
-              </Link>
-              <Link href="/products?category=footwear" className="block text-gray-700 hover:text-pink-600 font-medium">
-                Footwear
-              </Link>
-            </nav>
-          </div>
-        )}
+       
         
       </div>
     </header>
