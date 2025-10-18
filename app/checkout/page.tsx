@@ -10,6 +10,7 @@ import {message} from 'antd'
 import { useRouter } from 'next/navigation';
 import pioteximg from "../../public/razorpayimage/Piotex.png"
 import ApplyCoupon from '@/components/apply-coupon';
+import { reduxSliceData } from '@/redux/features/reduxData';
 // Add Razorpay type to window for TypeScript
 declare global {
   interface Window {
@@ -25,12 +26,14 @@ export default function CheckoutPage() {
   const [messageType, setMessageType] = useState('');
 
   const dispatch = useDispatch()
- const {Address,cartdata,discount} = useSelector((state:any)=> state?.reduxData?.data)
+ const {Address,cartdata,discount,couponApplied} = useSelector((state:any)=> state?.reduxData?.data)
+ console.log(couponApplied,"couponApplied")
  console.log(discount?.coupon,"discount")
 
  useEffect(()=>{
    fetchdata()
- },[])
+   dispatch(reduxSliceData({key:"couponApplied", data: false}))
+ },[couponApplied])
 
  const user = localStorage.getItem('user');
   useEffect(() => {
@@ -38,7 +41,9 @@ export default function CheckoutPage() {
       router.push('/login');
       message.error("Please login to continue to checkout")
     }
-  }, [user])
+
+    
+  }, [user]);
   
   console.log("user ", JSON.parse(user || '{}'))
   
@@ -129,6 +134,7 @@ export default function CheckoutPage() {
  }
  else if(res?.data?.paymentMethod === "cod" && res?.success){
   message.success("Order placed successfully!" )
+  fetchdata();
   router.push('/orders')
 
  }
@@ -390,7 +396,7 @@ export default function CheckoutPage() {
                   <span style={{ fontWeight: 500 }}>₹{subtotal.toLocaleString()}</span>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '15px' }}>
-                  <span style={{ color: '#666' }}>Discount</span>
+                  <span style={{ color: '#666' }}>Coupon Discount</span>
                   <span style={{ fontWeight: 500 }}>₹{discount?.coupon?.couponAmount?.toLocaleString() || 0}</span>
                 </div>
                 

@@ -1,16 +1,33 @@
 "use client";
 
 import React, { useState } from "react";
-import { Input, Button, Form, Alert } from "antd";
+import { Input, Button, Form, Alert, message } from "antd";
+import { addData } from "@/lib/customfetch/customFetch";
+import endpoints from "@/lib/endpoints/endponts";
+import { useDispatch } from "react-redux";
+import { reduxSliceData } from "@/redux/features/reduxData";
+
 
 export default function ApplyCoupon() {
   const [form] = Form.useForm();
   const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch()
 
-  const handleSubmit = (values: { coupon: string }) => {
+  const handleSubmit = async(values: { coupon: string }) => {
     setLoading(true);
-    console.log("Applied Coupon:", values.coupon);
-    setTimeout(() => setLoading(false), 1000); // simulate API call
+
+    const body ={
+     ...values
+    }
+   const res=  await addData(endpoints?.order?.applyCoupon, body);
+   if(res?.success){
+    message.success("Coupon applied successfully!");
+    dispatch(reduxSliceData({key:"couponApplied", data: true}))
+   } else{
+    message.error(res?.message || "Failed to apply coupon.");
+   }  
+    form.resetFields();
+    setLoading(false);
   };
 
   return (
@@ -34,7 +51,7 @@ export default function ApplyCoupon() {
         }}
       >
         <Form.Item
-          name="coupon"
+          name="couponCode"
           rules={[{ required: true, message: "Please enter a coupon code" }]}
           style={{ margin: 0 }}
         >
@@ -47,6 +64,7 @@ export default function ApplyCoupon() {
               boxShadow: "none",
               borderRadius: "8px",
             }}
+            required
           />
         </Form.Item>
 
