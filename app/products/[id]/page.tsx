@@ -22,6 +22,7 @@ import { useDispatch, useSelector } from "react-redux"
 import { message } from "antd"
 import { se } from "date-fns/locale"
 import { reduxSliceData } from "@/redux/features/reduxData"
+import SizeChart from "@/components/size-char"
 
 
 export default function ProductDetailsPage() {
@@ -168,26 +169,30 @@ export default function ProductDetailsPage() {
               </p>
 
               {/* Sizes */}
-              {productdata?.product?.ProductSizes?.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">Select Size</h3>
-                  <div className="flex gap-2 flex-wrap">
-                    {productdata?.product.ProductSizes.map((item : any) => (
-                      <button
-                        key={item.id}
-                        onClick={() => setSelectedSize(item.size)}
-                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
-                          selectedSize === item.size
-                            ? "border-pink-600 bg-pink-50 text-pink-600"
-                            : "border-gray-300 text-gray-700 hover:border-pink-300 hover:bg-pink-50"
-                        }`}
-                      >
-                        {item.size}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
+        {productdata?.product?.ProductSizes?.length > 0 && (
+  <div>
+    <h3 className="text-sm font-semibold mb-2">Select Size</h3>
+    <div className="flex gap-2 flex-wrap">
+      {productdata?.product.ProductSizes.map((item: any) => (
+        <button
+          key={item.id}
+          onClick={() => setSelectedSize(item.size)}
+          className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
+            selectedSize === item.size
+              ? "border-pink-600 bg-pink-50 text-pink-600"
+              : "border-gray-300 text-gray-700 hover:border-pink-300 hover:bg-pink-50"
+          }`}
+        >
+          {item.size}
+        </button>
+      ))}
+    </div>
+
+    {/* 👇 Add Size Chart Below */}
+    <SizeChart />
+  </div>
+)}
+
 
               {/* Colors */}
               {/* {productdata?.product?.ProductColors?.length > 0 && (
