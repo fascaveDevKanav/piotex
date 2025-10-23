@@ -14,10 +14,28 @@ import BannerImage from "../public/BannerImage.jpg"
 import Image from "next/image"
 import HeroBanner from "@/components/herobanner"
 import Bg from "@/public/Bg.jpg"
+import { getListData } from "@/lib/customfetch/customFetch"
+import { useDispatch, useSelector } from "react-redux"
+import endpoints from "@/lib/endpoints/endponts"
+import { useEffect } from "react"
+import { useAuth } from "@/hooks/use-auth"
 export default function HomePage() {
+const dispatch = useDispatch();
 
- 
-  const couponcode = "PIOTEX2024"
+ const {isAuthenticated} = useAuth();
+  useEffect(()=>{
+    if(isAuthenticated){
+      fetchdata();
+    }
+  },[])
+  
+  const fetchdata = async () =>{
+    await getListData(dispatch, "coupondata", endpoints?.order?.getCoupon)
+  }
+
+  const {coupondata} = useSelector((state:any)=>state?.reduxData?.data)
+  console.log("coupondata", coupondata)
+
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
@@ -25,15 +43,15 @@ export default function HomePage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
         {/* coupon */}
-        <div className="-mt-6 flex justify-end">
+      {coupondata?.coupons?.length > 0 &&  <div className="-mt-6 flex justify-end">
           <CouponBanner
          
-         messages={[`Sale use this coupon ${couponcode} code. Get 50% off on all products!`]}
+         messages={[`Sale use this coupon ${coupondata?.coupons?.[0]?.couponCode} code. Get ${coupondata?.coupons?.[0]?.couponAmount}₹ off on your first order`]}
          backgroundColor="#ff4081"
                 textColor="#000000"
           />
 
-        </div>
+        </div>}
 
 
         {/* Image Banner */}

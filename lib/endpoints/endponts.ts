@@ -1,5 +1,3 @@
-import { verify } from "crypto";
-
 const endpoints ={
 
     auth:{
@@ -28,7 +26,8 @@ const endpoints ={
         get:"api/order/getOrders",
         verifypayment:"api/order/verifyPayment",
         applyCoupon:"api/order/applyCoupon",
-        getDiscount:"api/order/getdiscount"
+        getDiscount:"api/order/getdiscount",
+        getCoupon:"api/order/listcoupons"
     }
 
  
