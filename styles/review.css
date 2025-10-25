@@ -1,0 +1,16 @@
+/* reviews.css */
+.custom-pink-button {
+  background-color: #ec4899 !important;
+  border-color: #ec4899 !important;
+}
+
+.custom-pink-button:hover {
+  background-color: #db2777 !important;
+  border-color: #db2777 !important;
+}
+
+.custom-pink-button:focus {
+  background-color: #ec4899 !important;
+  border-color: #ec4899 !important;
+  box-shadow: 0 0 0 2px rgba(236, 72, 153, 0.2) !important;
+}

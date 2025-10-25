@@ -23,6 +23,8 @@ import { message } from "antd"
 import { se } from "date-fns/locale"
 import { reduxSliceData } from "@/redux/features/reduxData"
 import SizeChart from "@/components/size-char"
+import {ReviewsList, AddReviewModal } from "@/components/product-review"
+
 
 
 export default function ProductDetailsPage() {
@@ -75,7 +77,7 @@ export default function ProductDetailsPage() {
     }
   }, [])
 
-     const addcart = async (productid: any , selectedSize :any ) =>{
+ const addcart = async (productid: any , selectedSize :any ) =>{
 
       if(!selectedSize){  
         message.error("Please select a size")
@@ -96,6 +98,33 @@ export default function ProductDetailsPage() {
      }
       dispatch(reduxSliceData({ key: "cartcall", data: false }));
     }
+
+
+
+    //  reviews 
+    
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [reviews, setReviews] = useState([
+    {
+      id: 1,
+      name: "John Doe",
+      date: "2025-10-20",
+      rating: 4,
+      comment: "Amazing product! Highly recommend.",
+      image: "https://via.placeholder.com/300",
+    },
+  ]);
+
+  const handleAddReview = (review) => {
+    const newReview = {
+      ...review,
+      id: Date.now(),
+      date: new Date(),
+    };
+    setReviews([newReview, ...reviews]);
+  };
+
 
 
 
@@ -234,6 +263,23 @@ export default function ProductDetailsPage() {
                
               </div>
             </div>
+          </div>
+
+
+          {/* product reviews  */}
+
+          <div>
+              <div className="">
+      <ReviewsList
+        reviews={reviews} 
+        onAddClick={() => setIsModalOpen(true)} 
+      />
+      <AddReviewModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleAddReview}
+      />
+    </div>
           </div>
         </div>
       </main>
