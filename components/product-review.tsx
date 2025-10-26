@@ -5,7 +5,7 @@ import { PlusOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
 import "../styles/review.css"; 
 
 // 🧾 Reviews List Component
-export const ReviewsList = ({ reviews, onAddClick }) => {
+export const ReviewsList = ({ reviews }) => {
   const formatDate = (date) =>
     new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -18,29 +18,21 @@ export const ReviewsList = ({ reviews, onAddClick }) => {
       <div className="flex justify-between items-center mb-6">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">Product Reviews</h1>
-          <p className="text-gray-600 mt-1">{reviews.length} reviews</p>
+          <p className="text-gray-600 mt-1">{reviews?.length} reviews</p>
         </div>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          className="custom-pink-button"
-          onClick={onAddClick}
-        >
-          Add Review
-        </Button>
       </div>
 
       <div className="space-y-4">
-        {reviews.length === 0 ? (
+        {reviews?.length === 0 ? (
           <div className="text-center py-12 bg-pink-50 rounded-lg border border-pink-200">
             <p className="text-gray-500 text-lg">
               No reviews yet. Be the first to review!
             </p>
           </div>
         ) : (
-          reviews.map((review) => (
+          reviews?.map((review) => (
             <div
-              key={review.id}
+              key={review?.id}
               className="bg-white border border-pink-100 rounded-lg p-6 hover:shadow-md transition-all"
             >
               <div className="flex items-start justify-between">
@@ -50,20 +42,20 @@ export const ReviewsList = ({ reviews, onAddClick }) => {
                   </div>
                   <div>
                     <h3 className="font-semibold text-gray-900">
-                      {review.name}
+                      {review?.name}
                     </h3>
                     <p className="text-sm text-gray-500">
-                      {formatDate(review.date)}
+                      {formatDate(review?.createdAt)}
                     </p>
                   </div>
                 </div>
-                <Rate disabled defaultValue={review.rating} />
+                <Rate disabled defaultValue={review?.rating} />
               </div>
-              <p className="mt-4 text-gray-700">{review.comment}</p>
-              {review.image && (
+              <p className="mt-4 text-gray-700">{review?.comment}</p>
+              {review?.image && (
                 <div className="mt-4">
                   <img
-                    src={review.image}
+                    src={review?.image}
                     alt="Review"
                     className="rounded-lg max-h-64 object-cover border-2 border-pink-100"
                   />

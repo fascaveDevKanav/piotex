@@ -10,7 +10,9 @@ const endpoints ={
     },
     products:{
         allproduct:"api/userproducts/all",
-        getProductId:"api/userproducts/getProductById"
+        getProductId:"api/userproducts/getProductById",
+        createreview:"api/review/add-review",
+        getAllReviews:"api/review/all-reviews"
     },
     cart:{
         add: 'api/cart/add',
@@ -28,7 +30,7 @@ const endpoints ={
         applyCoupon:"api/order/applyCoupon",
         getDiscount:"api/order/getdiscount",
         getCoupon:"api/order/listcoupons"
-    }
+    },
 
  
 

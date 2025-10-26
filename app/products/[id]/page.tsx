@@ -16,7 +16,7 @@ import "swiper/css/navigation"
 import "swiper/css/pagination"
 import "swiper/css/thumbs"
 
-import {  addData, getProductById } from "@/lib/customfetch/customFetch"
+import {  addData, getListData, getProductById } from "@/lib/customfetch/customFetch"
 import endpoints from "@/lib/endpoints/endponts"
 import { useDispatch, useSelector } from "react-redux"
 import { message } from "antd"
@@ -24,12 +24,13 @@ import { se } from "date-fns/locale"
 import { reduxSliceData } from "@/redux/features/reduxData"
 import SizeChart from "@/components/size-char"
 import {ReviewsList, AddReviewModal } from "@/components/product-review"
+import { useAuth } from "@/hooks/use-auth"
 
 
 
 export default function ProductDetailsPage() {
   const { id } = useParams()
-
+  const {isAuthenticated} = useAuth()
 
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
  
@@ -60,7 +61,7 @@ export default function ProductDetailsPage() {
  },[])
 
   //   api calling
-     const fetchdata = async()=>{
+    const fetchdata = async()=>{
       console.log("patasasa id:",id)
      await getProductById(dispatch, "productdata", endpoints?.products?.getProductId, {
       id: id
@@ -105,24 +106,20 @@ export default function ProductDetailsPage() {
     
 
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [reviews, setReviews] = useState([
-    {
-      id: 1,
-      name: "John Doe",
-      date: "2025-10-20",
-      rating: 4,
-      comment: "Amazing product! Highly recommend.",
-      image: "https://via.placeholder.com/300",
-    },
-  ]);
+
+ const { productReviews } = useSelector((state:any)=> state?.reduxData?.data)
+ console.log("product reviews :", productReviews)
+ useEffect(()=>{
+  if(isAuthenticated){
+    fetchReviews()
+  }
+ },[isAuthenticated])
+  const fetchReviews = async () =>{
+    console.log("fetch review for product id:", id)
+     await getListData(dispatch, "productReviews", `${endpoints?.products?.getAllReviews}/${id}`)  
+  }
 
   const handleAddReview = (review) => {
-    const newReview = {
-      ...review,
-      id: Date.now(),
-      date: new Date(),
-    };
-    setReviews([newReview, ...reviews]);
   };
 
 
@@ -268,10 +265,10 @@ export default function ProductDetailsPage() {
 
           {/* product reviews  */}
 
-          <div>
+     {isAuthenticated && <div>
               <div className="">
       <ReviewsList
-        reviews={reviews} 
+        reviews={productReviews?.reviews || []}
         onAddClick={() => setIsModalOpen(true)} 
       />
       <AddReviewModal
@@ -280,7 +277,7 @@ export default function ProductDetailsPage() {
         onSubmit={handleAddReview}
       />
     </div>
-          </div>
+          </div>}
         </div>
       </main>
 
