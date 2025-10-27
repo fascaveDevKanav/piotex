@@ -1,179 +1,138 @@
-"use client";
-import React, { useState } from "react";
-import { Modal, Input, Upload, Button, Rate, message } from "antd";
-import { PlusOutlined, UploadOutlined, UserOutlined } from "@ant-design/icons";
-import "../styles/review.css"; 
+// components/ProductReviews.tsx
+'use client';
 
-// 🧾 Reviews List Component
-export const ReviewsList = ({ reviews }) => {
-  const formatDate = (date) =>
-    new Date(date).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
+import React, { useState } from 'react';
+import { Button, Rate, Image, Avatar, List, Comment } from 'antd';
+import { StarFilled, UserOutlined } from '@ant-design/icons';
+import AddReviewModal from './add-reviewModal';
+import { useSelector } from 'react-redux';
+
+interface Review {
+  id: string;
+  user: string;
+  rating: number;
+  comment: string;
+  date: string;
+  images?: string[];
+}
+
+const ProductReviews: React.FC = () => {
+ 
+ const { productReviews } = useSelector((state:any)=> state?.reduxData?.data)
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  const showModal = () => {
+    setIsModalVisible(true);
+  };
+
+  const handleAddReview = (newReview: Omit<Review, 'id' | 'date'>) => {
+    
+    setIsModalVisible(false);
+  };
+
+  // const averageRating = productReviews?.reviews?.reduce((acc, review) => acc + review.rating, 0) / productReviews.length;
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="flex justify-between items-center mb-6">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900">Product Reviews</h1>
-          <p className="text-gray-600 mt-1">{reviews?.length} reviews</p>
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {reviews?.length === 0 ? (
-          <div className="text-center py-12 bg-pink-50 rounded-lg border border-pink-200">
-            <p className="text-gray-500 text-lg">
-              No reviews yet. Be the first to review!
-            </p>
-          </div>
-        ) : (
-          reviews?.map((review) => (
-            <div
-              key={review?.id}
-              className="bg-white border border-pink-100 rounded-lg p-6 hover:shadow-md transition-all"
+    <div className="min-h-screen bg-white p-6">
+      <div className="max-w-4xl mx-auto">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <h1 className="text-3xl font-bold text-pink-600 mb-4">Customer Reviews</h1>
+          
+          {/* Rating Summary */}
+          <div className="bg-pink-50 rounded-lg p-6 mb-6 border border-pink-200">
+            <div className="flex items-center justify-center space-x-4 mb-4">
+              <div className="text-center">
+                {/* <div className="text-4xl font-bold text-pink-600">{averageRating.toFixed(1)}</div> */}
+                {/* <Rate 
+                  disabled 
+                  value={averageRating} 
+                  className="text-pink-500 text-lg"
+                /> */}
+                <div className="text-gray-600 text-sm mt-1">
+                  {productReviews?.reviews?.length} reviews
+                </div>
+              </div>
+            </div>
+            <Button 
+              type="primary"
+              className="bg-pink-500 hover:bg-pink-600 border-pink-500"
+              size="large"
+              onClick={showModal}
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-white">
-                    <UserOutlined />
-                  </div>
+              Write a Review
+            </Button>
+          </div>
+        </div>
+
+        {/* Reviews List */}
+        <div className="space-y-6">
+          {productReviews?.reviews?.map((review) => (
+            <div 
+              key={review.id}
+              className="bg-white rounded-lg border border-pink-200 p-6 shadow-sm hover:shadow-md transition-shadow"
+            >
+              {/* Review Header */}
+              <div className="flex items-start justify-between mb-4">
+                <div className="flex items-center space-x-3">
+                  <Avatar 
+                    size="large" 
+                    icon={<UserOutlined />} 
+                    className="bg-pink-100 text-pink-600"
+                  />
                   <div>
-                    <h3 className="font-semibold text-gray-900">
-                      {review?.name}
-                    </h3>
-                    <p className="text-sm text-gray-500">
-                      {formatDate(review?.createdAt)}
-                    </p>
+                    <div className="font-semibold text-gray-800">{review.user}</div>
+                    <div className="flex items-center space-x-2">
+                      <Rate 
+                        disabled 
+                        value={review.rating} 
+                        className="text-pink-500 text-sm"
+                      />
+                      <span className="text-gray-500 text-sm">{review.date}</span>
+                    </div>
                   </div>
                 </div>
-                <Rate disabled defaultValue={review?.rating} />
               </div>
-              <p className="mt-4 text-gray-700">{review?.comment}</p>
-              {review?.image && (
-                <div className="mt-4">
-                  <img
-                    src={review?.image}
-                    alt="Review"
-                    className="rounded-lg max-h-64 object-cover border-2 border-pink-100"
-                  />
+
+              {/* Review Comment */}
+              <div className="text-gray-700 mb-4 leading-relaxed">
+                {review.comment}
+              </div>
+
+              {/* Review Images */}
+              {review.images && review.images.length > 0 && (
+                <div className="flex space-x-2 mt-4">
+                  {review.images.map((image, index) => (
+                    <div key={index} className="w-20 h-20 rounded-lg overflow-hidden border border-pink-200">
+                      <Image
+                        width={80}
+                        height={80}
+                        src={image}
+                        alt={`Review image ${index + 1}`}
+                        className="object-cover"
+                        placeholder={
+                          <div className="w-20 h-20 bg-pink-100 flex items-center justify-center">
+                            <span className="text-pink-300">Loading</span>
+                          </div>
+                        }
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
-          ))
-        )}
+          ))}
+        </div>
+
+        {/* Add Review Modal */}
+        <AddReviewModal
+          visible={isModalVisible}
+          onCancel={() => setIsModalVisible(false)}
+          onSubmit={handleAddReview}
+        />
       </div>
     </div>
   );
 };
 
-// 💬 Add Review Modal using Ant Design
-export const AddReviewModal = ({ isOpen, onClose, onSubmit }) => {
-  const [formData, setFormData] = useState({
-    name: "",
-    rating: 0,
-    comment: "",
-    image: null,
-  });
-  const [fileList, setFileList] = useState([]);
-
-  const handleOk = () => {
-    if (!formData.name.trim()) {
-      message.error("Please enter your name");
-      return;
-    }
-    if (formData.rating === 0) {
-      message.error("Please select a rating");
-      return;
-    }
-    if (!formData.comment.trim()) {
-      message.error("Please enter your review");
-      return;
-    }
-
-    onSubmit(formData);
-    message.success("Review submitted successfully!");
-    handleCancel();
-  };
-
-  const handleCancel = () => {
-    setFormData({ name: "", rating: 0, comment: "", image: null });
-    setFileList([]);
-    onClose();
-  };
-
-  const handleUpload = ({ fileList: newList }) => {
-    setFileList(newList);
-    if (newList.length > 0) {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        setFormData({ ...formData, image: e.target.result });
-      };
-      reader.readAsDataURL(newList[0].originFileObj);
-    } else {
-      setFormData({ ...formData, image: null });
-    }
-  };
-
-  return (
-    <Modal
-      title={<span className="text-lg font-semibold text-pink-600">Add Your Review</span>}
-      open={isOpen}
-      onOk={handleOk}
-      onCancel={handleCancel}
-      okText="Submit Review"
-      cancelText="Cancel"
-      okButtonProps={{
-        className: "custom-pink-button"
-      }}
-    >
-      <div className="space-y-4 mt-4">
-        {/* Name */}
-        <Input
-          placeholder="Enter your name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-        />
-
-        {/* Rating */}
-        <div>
-          <p className="font-medium text-gray-700 mb-1">Rating</p>
-          <Rate
-            value={formData.rating}
-            onChange={(value) => setFormData({ ...formData, rating: value })}
-          />
-        </div>
-
-        {/* Comment */}
-        <Input.TextArea
-          placeholder="Write your review..."
-          rows={4}
-          value={formData.comment}
-          onChange={(e) => setFormData({ ...formData, comment: e.target.value })}
-        />
-
-        {/* Image Upload */}
-        <div>
-          <p className="font-medium text-gray-700 mb-1">Upload Image (Optional)</p>
-          <Upload
-            accept="image/*"
-            listType="picture-card"
-            fileList={fileList}
-            beforeUpload={() => false} // prevent auto upload
-            onChange={handleUpload}
-            onRemove={() => handleUpload({ fileList: [] })}
-          >
-            {fileList.length >= 1 ? null : (
-              <div>
-                <UploadOutlined />
-                <div style={{ marginTop: 8 }}>Upload</div>
-              </div>
-            )}
-          </Upload>
-        </div>
-      </div>
-    </Modal>
-  );
-};
+export default ProductReviews;

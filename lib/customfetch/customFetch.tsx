@@ -61,8 +61,12 @@ export const getProductById = async (
 export const addData = async (
  url:string, body?:any, flag?:boolean)=>{
     try {
-        const response = await api.post(url, body);
-        console.log("response", response)
+        const response =flag ? await api.post(url, body, {
+            headers: {
+            'Content-Type': 'multipart/form-data'
+            }
+        }) : await api.post(url, body);
+         console.log("response", response)
         if(response.status === 200 || response.status === 201){
             return {success:true, data:response?.data}
         }else{

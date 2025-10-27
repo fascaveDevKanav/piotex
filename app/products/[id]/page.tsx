@@ -23,8 +23,9 @@ import { message } from "antd"
 import { se } from "date-fns/locale"
 import { reduxSliceData } from "@/redux/features/reduxData"
 import SizeChart from "@/components/size-char"
-import {ReviewsList, AddReviewModal } from "@/components/product-review"
 import { useAuth } from "@/hooks/use-auth"
+import AddReviewModal from "@/components/add-reviewModal"
+import ProductReviews from "@/components/product-review"
 
 
 
@@ -104,9 +105,6 @@ export default function ProductDetailsPage() {
 
     //  reviews 
     
-
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
  const { productReviews } = useSelector((state:any)=> state?.reduxData?.data)
  console.log("product reviews :", productReviews)
  useEffect(()=>{
@@ -118,9 +116,6 @@ export default function ProductDetailsPage() {
     console.log("fetch review for product id:", id)
      await getListData(dispatch, "productReviews", `${endpoints?.products?.getAllReviews}/${id}`)  
   }
-
-  const handleAddReview = (review) => {
-  };
 
 
 
@@ -267,16 +262,9 @@ export default function ProductDetailsPage() {
 
      {isAuthenticated && <div>
               <div className="">
-      <ReviewsList
-        reviews={productReviews?.reviews || []}
-        onAddClick={() => setIsModalOpen(true)} 
-      />
-      <AddReviewModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        onSubmit={handleAddReview}
-      />
-    </div>
+                <ProductReviews />
+     
+       </div>
           </div>}
         </div>
       </main>

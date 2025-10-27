@@ -2,7 +2,36 @@
 @import 'tw-animate-css';
 
 @custom-variant dark (&:is(.dark *));
+/* app/globals.css */
+.ant-rate-star-full .ant-rate-star-second {
+  color: #ec4899 !important;
+}
 
+.ant-rate-star-half .ant-rate-star-first {
+  color: #ec4899 !important;
+}
+
+.ant-btn-primary {
+  background-color: #ec4899 !important;
+  border-color: #ec4899 !important;
+}
+
+.ant-btn-primary:hover {
+  background-color: #db2777 !important;
+  border-color: #db2777 !important;
+}
+
+.ant-modal-close {
+  color: #ec4899 !important;
+}
+
+.ant-upload.ant-upload-select-picture-card {
+  border-color: #fbcfe8 !important;
+}
+
+.ant-upload.ant-upload-select-picture-card:hover {
+  border-color: #ec4899 !important;
+}
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);

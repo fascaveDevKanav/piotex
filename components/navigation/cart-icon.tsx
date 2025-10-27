@@ -7,11 +7,13 @@ import { useDispatch, useSelector } from "react-redux"
 import { useEffect, useState } from "react"
 import {  getListData } from "@/lib/customfetch/customFetch"
 import endpoints from "@/lib/endpoints/endponts"
+import { useAuth } from "@/hooks/use-auth"
 
 export function CartIcon() {
   const [userdata, setUserdata] = useState<any>(null)
   const dispatch = useDispatch()
   const {cartcall} = useSelector((state:any)=> state?.reduxData?.data)
+  const { isAuthenticated } = useAuth()
   // Load user from localStorage
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -24,10 +26,10 @@ export function CartIcon() {
 
   // Fetch cart count only when user data is ready
   useEffect(() => {
-    if (userdata?.id) {
+    if (userdata?.id && isAuthenticated) {
       fetchCartcount()
     }
-  }, [userdata, cartcall])
+  }, [userdata, cartcall, isAuthenticated])
 
   const fetchCartcount = async () => {
     const body = {
