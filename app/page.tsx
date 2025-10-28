@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux"
 import endpoints from "@/lib/endpoints/endponts"
 import { useEffect } from "react"
 import { useAuth } from "@/hooks/use-auth"
+import { BananaIcon } from "lucide-react"
 export default function HomePage() {
 const dispatch = useDispatch();
 
@@ -27,14 +28,15 @@ const dispatch = useDispatch();
     if(isAuthenticated){
       fetchdata();
     }
-  },[])
+  },[isAuthenticated])
   
   const fetchdata = async () =>{
     await getListData(dispatch, "coupondata", endpoints?.order?.getCoupon)
+    await getListData(dispatch, "bannerdata", endpoints?.banner?.getbanner)
   }
 
-  const {coupondata} = useSelector((state:any)=>state?.reduxData?.data)
-  console.log("coupondata", coupondata)
+  const {bannerdata,coupondata} = useSelector((state:any)=>state?.reduxData?.data)
+  console.log("coupondata", bannerdata?.[0]?.bannerUrl)
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -59,12 +61,18 @@ const dispatch = useDispatch();
       className={`w-full rounded-lg overflow-hidden shadow-lg cursor-pointer hover:shadow-xl transition-shadow duration-300 mb-5`}
       
     >
-
       <Image
-      src={BannerImage}
-      alt="Banner"
-      className="w-full h-auto object-cover"
-      />
+  src={
+    bannerdata?.[0]?.bannerUrl
+      ? `${process.env.NEXT_PUBLIC_API_BASE_URL}uploads/${bannerdata[0].bannerUrl}`
+      : BannerImage
+  }
+  width={1000}
+  height={400}
+  alt="Banner"
+  className="w-full h-auto object-cover"
+/>
+
     </div>
  
         <HeroBanner

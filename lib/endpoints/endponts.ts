@@ -31,6 +31,9 @@ const endpoints ={
         getDiscount:"api/order/getdiscount",
         getCoupon:"api/order/listcoupons"
     },
+    banner:{
+        getbanner:"api/userbanner/all"
+    }
 
  
 
