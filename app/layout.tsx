@@ -8,8 +8,9 @@ import { CartProvider } from "@/hooks/use-cart"
 import { Suspense } from "react"
 import "./globals.css"
 import { ProductProvider } from "@/hooks/usedata-product"
-import StoreProvider from "./StoreProvider"
 import Providers from "@/redux/provider"
+import { Header } from "@/components/layout/header"
+import { Footer } from "@/components/layout/footer"
 
 export const metadata: Metadata = {
   title: "Ladies Wear - Fashion E-commerce",
@@ -31,7 +32,9 @@ export default function RootLayout({
 
             <ProductProvider>
             <CartProvider>
+              <Header/>
               {children}
+              <Footer/>
               </CartProvider>
               </ProductProvider>
               

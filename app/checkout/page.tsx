@@ -184,8 +184,7 @@ export default function CheckoutPage() {
         </div>
       )}
 
-      {/* Header */}
-    <Header />
+
 
       {/* Main Content */}
       <div style={{ 
@@ -522,7 +521,6 @@ export default function CheckoutPage() {
           </div>
         </div>
       </div>
-      <Footer/>
     </div>
   );
 }

@@ -25,7 +25,7 @@ useEffect(()=>{
  }
    return(
      <div className=" bg-gray-50">
-      <Header />
+   
 
 
      <div className="container ">
@@ -37,7 +37,7 @@ useEffect(()=>{
             </div>
           </div>
      </div>
-      <Footer />
+      
     </div>
    )
 

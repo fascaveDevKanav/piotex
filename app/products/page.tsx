@@ -25,7 +25,6 @@ console.log("products", products?.products)
    }
    return(
      <div className=" bg-gray-50">
-      <Header />
 
 
      <div className="container ">
@@ -37,7 +36,6 @@ console.log("products", products?.products)
             </div>
           </div>
      </div>
-      <Footer />
     </div>
    )
 
