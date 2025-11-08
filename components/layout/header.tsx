@@ -1,24 +1,25 @@
-"use client"
+"use client"; // 👈 must be the very first line
 
-import Link from "next/link"
-import { ShoppingBag, User, LogOut, Menu } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { useAuth } from "@/hooks/use-auth"
-import  MegaMenu  from "@/components/navigation/mega-menu"
-
-import { CartIcon } from "@/components/navigation/cart-icon"
+import Link from "next/link";
+import Image from "next/image";
+import { ShoppingBag, User, LogOut } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useAuth } from "@/hooks/use-auth";
+import MegaMenu from "@/components/navigation/mega-menu";
+import { CartIcon } from "@/components/navigation/cart-icon";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { useState } from "react"
+} from "@/components/ui/dropdown-menu";
+import logo from "@/public/logo.png";
+import { useState } from "react";
 
 export function Header() {
-  const { user, isAuthenticated, logout } = useAuth()
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
+  const { user, isAuthenticated, logout } = useAuth();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <header className="bg-white shadow-sm border-b sticky top-0 z-40">
@@ -27,10 +28,9 @@ export function Header() {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center">
-            <ShoppingBag className="h-8 w-8 text-pink-600" />
-            <span className="ml-2 text-xl font-bold text-gray-900"> RWear</span>
+            <Image src={logo} alt="Adller" className="h-10 w-auto" />
+            <span className=" text-xl font-bold text-gray-900">Adller</span>
           </Link>
-
 
           {/* Right side */}
           <div className="flex items-center space-x-4">
@@ -38,8 +38,7 @@ export function Header() {
             {isAuthenticated && <CartIcon />}
 
             {/* User Menu */}
-
-                  {isAuthenticated ? (
+            {isAuthenticated ? (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="ghost" className="flex items-center space-x-2">
@@ -47,10 +46,8 @@ export function Header() {
                     <span className="hidden sm:inline">{user?.name}</span>
                   </Button>
                 </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48">
-                  {/* <DropdownMenuItem asChild>
-                    <Link href="/profile">My Profile</Link>
-                  </DropdownMenuItem> */}
+
+                <DropdownMenuContent align="end" className="w-48">
                   <DropdownMenuItem asChild>
                     <Link href="/orders">My Orders</Link>
                   </DropdownMenuItem>
@@ -74,30 +71,16 @@ export function Header() {
                 </Link>
               </div>
             )}
-
-          
           </div>
         </div>
 
         {/* Desktop Navigation */}
-   
-          <div className=" border-t border-gray-200">
-            <div className="py-4">
-              <MegaMenu />
-            </div>
+        <div className="border-t border-gray-200">
+          <div className="py-4">
+            <MegaMenu />
           </div>
-
-
-        {/* Mobile Search Bar */}
-        {/* {isAuthenticated && (
-          <div className="md:hidden border-t border-gray-200 py-3">
-            <SearchBar />
-          </div>
-        )} */}
-
-       
-        
+        </div>
       </div>
     </header>
-  )
+  );
 }
