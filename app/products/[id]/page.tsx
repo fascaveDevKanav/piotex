@@ -5,8 +5,6 @@ import { useParams } from "next/navigation"
 import Image from "next/image"
 import { ShoppingCart, Share2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
 
 // Swiper imports
 import { Swiper, SwiperSlide } from "swiper/react"
@@ -122,7 +120,6 @@ export default function ProductDetailsPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      <Header />
 
       <main className="flex-1">
         <div className="container mx-auto px-3 sm:px-4 lg:px-6 xl:px-8 py-6 lg:py-10">
@@ -269,7 +266,6 @@ export default function ProductDetailsPage() {
         </div>
       </main>
 
-      <Footer />
 
       {/* Swiper styles */}
       <style jsx global>{`

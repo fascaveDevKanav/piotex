@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation"
 import endpoints from "@/lib/endpoints/endponts"
 import { useDispatch, useSelector } from "react-redux"
 import { getListData } from "@/lib/customfetch/customFetch"
+import { useAuth } from "@/hooks/use-auth"
 
 const MegaMenu = () => {
   const router = useRouter()
@@ -14,10 +15,11 @@ const MegaMenu = () => {
   const [showRightFade, setShowRightFade] = useState(false)
 
   const { categories } = useSelector((state: any) => state?.reduxData?.data)
+  const {isAuthenticated} = useAuth()
 
   useEffect(() => {
     fetchCategories()
-  }, [])
+  }, [isAuthenticated])
 
   const fetchCategories = async () => {
     await getListData(dispatch, "categories", endpoints?.categories?.getAllcategories)

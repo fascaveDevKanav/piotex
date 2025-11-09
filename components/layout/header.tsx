@@ -75,11 +75,11 @@ export function Header() {
         </div>
 
         {/* Desktop Navigation */}
-        <div className="border-t border-gray-200">
+       {isAuthenticated && <div className="border-t border-gray-200">
           <div className="py-4">
             <MegaMenu />
           </div>
-        </div>
+        </div>}
       </div>
     </header>
   );

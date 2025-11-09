@@ -73,28 +73,29 @@ export function Footer() {
             <h4 className="text-lg font-semibold mb-4">Customer Service</h4>
             <ul className="space-y-2">
               <li>
-                <Link href="/contact" className="text-gray-400 hover:text-pink-500 transition-colors">
-                  Contact Us
+                <Link href="/about_us" className="text-gray-400 hover:text-pink-500 transition-colors">
+                  About Us 
                 </Link>
               </li>
               <li>
-                <Link href="/shipping" className="text-gray-400 hover:text-pink-500 transition-colors">
-                  Shipping Info
+                <Link href="/contact_us" className="text-gray-400 hover:text-pink-500 transition-colors">
+                  Contact Us 
                 </Link>
               </li>
               <li>
-                <Link href="/returns" className="text-gray-400 hover:text-pink-500 transition-colors">
-                  Returns & Exchanges
+                <Link href="/terms_conditions" className="text-gray-400 hover:text-pink-500 transition-colors">
+                  Terms & Conditions
                 </Link>
               </li>
               <li>
-                <Link href="/size-guide" className="text-gray-400 hover:text-pink-500 transition-colors">
-                  Size Guide
+                <Link href="/privacy_policy" className="text-gray-400 hover:text-pink-500 transition-colors">
+                  Privacy Policy
                 </Link>
               </li>
+            
               <li>
-                <Link href="/faq" className="text-gray-400 hover:text-pink-500 transition-colors">
-                  FAQ
+                <Link href="/refund_cancellation" className="text-gray-400 hover:text-pink-500 transition-colors">
+                  Refund Cancellation
                 </Link>
               </li>
             </ul>
