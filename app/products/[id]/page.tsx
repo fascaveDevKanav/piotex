@@ -1,9 +1,9 @@
 "use client"
 
 import { use, useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import Image from "next/image"
-import { ShoppingCart, Share2 } from "lucide-react"
+import { ShoppingCart, Share2, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 // Swiper imports
@@ -14,11 +14,11 @@ import "swiper/css/navigation"
 import "swiper/css/pagination"
 import "swiper/css/thumbs"
 
-import {  addData, getListData, getProductById } from "@/lib/customfetch/customFetch"
+import { addData, getListData, getProductById } from "@/lib/customfetch/customFetch"
 import endpoints from "@/lib/endpoints/endponts"
 import { useDispatch, useSelector } from "react-redux"
 import { message } from "antd"
-import { se } from "date-fns/locale"
+
 import { reduxSliceData } from "@/redux/features/reduxData"
 import SizeChart from "@/components/size-char"
 import { useAuth } from "@/hooks/use-auth"
@@ -27,15 +27,17 @@ import ProductReviews from "@/components/product-review"
 
 
 
+
 export default function ProductDetailsPage() {
   const { id } = useParams()
-  const {isAuthenticated} = useAuth()
-
+  const { isAuthenticated } = useAuth();
+  const router = useRouter();
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
- 
+
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
-  const { productdata } = useSelector((state:any) => state?.reduxData?.data)
-   console.log('selected Size ', selectedSize)
+  const { productdata } = useSelector((state: any) => state?.reduxData?.data)
+  const [sizeerror, setSizeerror] = useState<string | null>("")
+  console.log('selected Size ', selectedSize)
 
   const handleShare = () => {
     if (!productdata?.product) return
@@ -50,25 +52,25 @@ export default function ProductDetailsPage() {
     }
   }
 
-  
- const dispatch = useDispatch()   
 
- useEffect(()=>{
-  if(id){
-    fetchdata()
-  }
- },[])
+  const dispatch = useDispatch()
+
+  useEffect(() => {
+    if (id) {
+      fetchdata()
+    }
+  }, [])
 
   //   api calling
-    const fetchdata = async()=>{
-      console.log("patasasa id:",id)
-     await getProductById(dispatch, "productdata", endpoints?.products?.getProductId, {
+  const fetchdata = async () => {
+    console.log("patasasa id:", id)
+    await getProductById(dispatch, "productdata", endpoints?.products?.getProductId, {
       id: id
-     })
+    })
 
-     } 
+  }
 
- const [userdata, setUserdata] = useState<any>(null)
+  const [userdata, setUserdata] = useState<any>(null)
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user")
@@ -77,42 +79,56 @@ export default function ProductDetailsPage() {
     }
   }, [])
 
- const addcart = async (productid: any , selectedSize :any ) =>{
+  const addcart = async (productid: any, selectedSize: any) => {
 
-      if(!selectedSize){  
-        message.error("Please select a size")
+    if (!selectedSize) {
+      setSizeerror("Please select a size");
+      message.error("Please select a size");
+      return;
+    }
+    dispatch(reduxSliceData({ key: "cartcall", data: true }));
+    const sizename = productdata?.product?.ProductSizes?.filter((item: any) => item.size === selectedSize)
+    const body = {
+      userId: userdata?.id,
+      productId: productid,
+      productSize: sizename?.[0]?.size,
+    }
+    const res = await addData(endpoints?.cart?.add, body)
+    if (res?.success) {
+      message.success("Product added to cart")
+    } else {
+      message.error(res?.message || "Failed to add product to cart")
+    }
+    dispatch(reduxSliceData({ key: "cartcall", data: false }));
+  }
+  const handleBuy = async (productid: any, selectedSize: any) => {
+    try {
+
+      if (!selectedSize) {
+        setSizeerror("Please select a size");
+        message.error("Please select a size");
         return;
       }
-      dispatch(reduxSliceData({ key: "cartcall", data: true }));
-      const sizename = productdata?.product?.ProductSizes?.filter((item:any)=> item.size === selectedSize)
-      const body ={
-        userId: userdata?.id,
-        productId: productid,
-        productSize: sizename?.[0]?.size,
-      }
-    const res =  await addData(endpoints?.cart?.add, body)
-    if(res?.success){
-      message.success("Product added to cart")
-     }else{
-      message.error(res?.message || "Failed to add product to cart")
-     }
-      dispatch(reduxSliceData({ key: "cartcall", data: false }));
+      router.push(`/checkout/${productid}`);
+      dispatch(reduxSliceData({ key: "buyNowSize", data: selectedSize }));
+    } catch (error) {
+
     }
-
-
-
-    //  reviews 
-    
- const { productReviews } = useSelector((state:any)=> state?.reduxData?.data)
- console.log("product reviews :", productReviews)
- useEffect(()=>{
-  if(isAuthenticated){
-    fetchReviews()
   }
- },[isAuthenticated])
-  const fetchReviews = async () =>{
+
+
+  //  reviews 
+
+  const { productReviews } = useSelector((state: any) => state?.reduxData?.data)
+  console.log("product reviews :", productReviews)
+  useEffect(() => {
+    if (isAuthenticated) {
+      fetchReviews()
+    }
+  }, [isAuthenticated])
+  const fetchReviews = async () => {
     console.log("fetch review for product id:", id)
-     await getListData(dispatch, "productReviews", `${endpoints?.products?.getAllReviews}/${id}`)  
+    await getListData(dispatch, "productReviews", `${endpoints?.products?.getAllReviews}/${id}`)
   }
 
 
@@ -164,7 +180,7 @@ export default function ProductDetailsPage() {
                   {productdata?.product.name}
                 </h1>
                 <div className="flex gap-2">
-                 
+
                   <button
                     onClick={handleShare}
                     className="p-2 rounded-full border bg-white border-gray-200 text-gray-600 hover:border-pink-200"
@@ -187,29 +203,46 @@ export default function ProductDetailsPage() {
               </p>
 
               {/* Sizes */}
-        {productdata?.product?.ProductSizes?.length > 0 && (
-  <div>
-    <h3 className="text-sm font-semibold mb-2">Select Size</h3>
-    <div className="flex gap-2 flex-wrap">
-      {productdata?.product.ProductSizes.map((item: any) => (
-        <button
-          key={item.id}
-          onClick={() => setSelectedSize(item.size)}
-          className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${
-            selectedSize === item.size
-              ? "border-pink-600 bg-pink-50 text-pink-600"
-              : "border-gray-300 text-gray-700 hover:border-pink-300 hover:bg-pink-50"
-          }`}
-        >
-          {item.size}
-        </button>
-      ))}
-    </div>
+              {productdata?.product?.ProductSizes?.length > 0 && (
+                <div>
+                  <h3 className="text-sm font-semibold mb-2">Select Size</h3>
+                  <div className="flex gap-2 flex-wrap">
+                    {productdata?.product.ProductSizes.map((item: any) => (
+                      <button
+                        key={item.id}
+                        onClick={() => { setSelectedSize(item.size); setSizeerror("") }}
+                        className={`px-4 py-2 rounded-lg border text-sm font-medium transition-all ${selectedSize === item.size
+                          ? "border-pink-600 bg-pink-50 text-pink-600"
+                          : "border-gray-300 text-gray-700 hover:border-pink-300 hover:bg-pink-50"
+                          }`}
+                      >
+                        {item.size}
+                      </button>
+                    ))}
 
-    {/* 👇 Add Size Chart Below */}
-    <SizeChart />
-  </div>
-)}
+
+                  </div>
+                  <div className="mt-0"> {sizeerror && <span className="text-red-600 text-sm transition">{sizeerror}</span>}</div>
+                  {/* stock */}
+
+                  <div className="mt-3">
+                    <h2>Stock:  {productdata?.product.stock > 0 && productdata?.product.stock <= 5 ? (
+                      <span className="text-green-600 font-medium">Only fews product are available. hurry Up</span>
+                    ) : productdata?.product.stock > 0 ? (
+                      <span className="text-green-600 font-medium">In Stock</span>
+                    ) : <span className="text-red-600 font-medium">Out of Stock</span>} </h2>
+                  </div>
+
+
+                  {/* 👇 Add Size Chart Below */}
+                  <SizeChart />
+                </div>
+              )}
+
+
+
+
+
 
 
               {/* Colors */}
@@ -234,7 +267,7 @@ export default function ProductDetailsPage() {
     />
   )
 })} */}
-{/* 
+              {/* 
                   </div>
                 </div>
               )} */}
@@ -249,7 +282,15 @@ export default function ProductDetailsPage() {
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Add to Cart
                 </Button>
-               
+                <Button
+                  onClick={() => handleBuy(productdata?.product.id, selectedSize)}
+                  variant="outline"
+                  className="w-full sm:flex-1 border-pink-600 text-pink-600 rounded-full"
+                >
+                  <CreditCard className="h-5 w-5 mr-2" />
+                  Buy Now
+                </Button>
+
               </div>
             </div>
           </div>
@@ -257,11 +298,11 @@ export default function ProductDetailsPage() {
 
           {/* product reviews  */}
 
-     {isAuthenticated && <div>
-              <div className="">
-                <ProductReviews />
-     
-       </div>
+          {isAuthenticated && <div>
+            <div className="">
+              <ProductReviews />
+
+            </div>
           </div>}
         </div>
       </main>

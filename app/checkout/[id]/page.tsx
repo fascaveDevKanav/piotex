@@ -3,12 +3,12 @@ import React, { useEffect, useState } from 'react';
 import { ShoppingBag, User, MapPin, CreditCard, Shield, ChevronDown } from 'lucide-react';
 import { Header } from '@/components/layout/header';
 import { Footer } from '@/components/layout/footer';
-import { addData, getListData } from '@/lib/customfetch/customFetch';
+import { addData, getListData, getProductById } from '@/lib/customfetch/customFetch';
 import { useDispatch, useSelector } from 'react-redux';
 import endpoints from '@/lib/endpoints/endponts';
-import {  message } from 'antd'
-import { useRouter } from 'next/navigation';
-import pioteximg from "../../public/razorpayimage/Piotex.png"
+import { message } from 'antd'
+import { useParams, useRouter } from 'next/navigation';
+import pioteximg from "../../../public/razorpayimage/Piotex.png"
 import ApplyCoupon from '@/components/apply-coupon';
 import { reduxSliceData } from '@/redux/features/reduxData';
 import { Button } from '@/components/ui/button';
@@ -25,16 +25,17 @@ export default function CheckoutPage() {
   const [showMessage, setShowMessage] = useState(false);
   const [messageText, setMessageText] = useState('');
   const [messageType, setMessageType] = useState('');
-
+  const params = useParams();
   const dispatch = useDispatch()
-  const { Address, cartdata, discount, couponApplied } = useSelector((state: any) => state?.reduxData?.data)
-  console.log(couponApplied, "couponApplied")
-  console.log(discount?.coupon, "discount")
+  const { Address, productdata, discount, couponApplied, buyNowSize } = useSelector((state: any) => state?.reduxData?.data)
+
 
   useEffect(() => {
+    if (!buyNowSize) router.push(`/products/${params.id}`);
     fetchdata()
     dispatch(reduxSliceData({ key: "couponApplied", data: false }))
   }, [couponApplied])
+  console.log()
 
 
   const [user, setUser] = useState<any>(null);
@@ -51,29 +52,30 @@ export default function CheckoutPage() {
 
   const fetchdata = async () => {
     await getListData(dispatch, "Address", endpoints?.user?.getAddress)
-    await getListData(dispatch, "cartdata", endpoints.cart.get)
+    await getProductById(dispatch, "productdata", endpoints?.products?.getProductId, {
+      id: params?.id
+    })
     await getListData(dispatch, "discount", endpoints?.order?.getDiscount)
 
   }
   const router = useRouter()
-  console.log("cartdata", cartdata)
+  console.log(productdata, "productdata ")
 
-  const subtotal = cartdata?.cartItems?.reduce((acc, item) => acc + item?.Product?.price * item?.quantity, 0) || 0;
+  const subtotal = productdata?.product?.price || 0;
   const shipping = 0;
   const tax = 0;
   const discountAmount = discount?.coupon?.couponAmount || 0;
   const total = subtotal + shipping + tax - discountAmount;
+  console.log(productdata, "buyNowSize")
 
-
-  const items = cartdata?.cartItems?.map(item => ({
-    id: item?.Product?.id,
-    name: item?.Product?.name,
-    size: item?.productSize,
-    price: item?.Product?.price,
-    quantity: item?.quantity,
-    total: item?.Product?.price * item?.quantity,
-  })) || [];
-
+  const items = [{
+    id: productdata?.product?.id,
+    name: productdata?.product?.name,
+    size: buyNowSize,
+    price: productdata?.product?.price,
+    quantity: productdata?.product?.quantity || 1,
+    total: productdata?.product?.price * 1,
+  }];
 
 
   const handlePlaceOrder = async () => {
@@ -228,74 +230,74 @@ export default function CheckoutPage() {
             <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
               {/* Delivery Address */}
               <div style={{
-                             backgroundColor: 'white',
-                             padding: 'clamp(16px, 3vw, 24px)',
-                             borderRadius: '8px',
-                             boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
-                           }}>
-                             <div style={{
-                               display: 'flex',
-                               alignItems: 'center',
-                               gap: '8px',
-                               marginBottom: '20px',
-                               fontSize: 'clamp(16px, 3vw, 18px)',
-                               fontWeight: 600
-                             }}>
-             
-                               <div className='flex justify-between w-full'>
-                                 <div className='flex gap-3 items-center'>
-                                   <MapPin size={20} color="#eb2f96" />
-                                   <span>Delivery Address</span>
-                                 </div>
-                                 <Button
-                                   onClick={() => router.push("/address")}
-                                   variant="outline"
-                                   className="w-52  border-pink-600 text-pink-600 rounded-full"
-                                 >
-             
-                                   Add Address
-                                 </Button>
-             
-                               </div>
-                             </div>
-             
-                             <div style={{ position: 'relative' }}>
-                               <select
-                                 value={selectedAddress}
-                                 onChange={(e) => setSelectedAddress(e.target.value)}
-                                 style={{
-                                   width: '100%',
-                                   padding: '12px 40px 12px 16px',
-                                   fontSize: 'clamp(14px, 2.5vw, 15px)',
-                                   border: '1px solid #d9d9d9',
-                                   borderRadius: '6px',
-                                   backgroundColor: 'white',
-                                   cursor: 'pointer',
-                                   appearance: 'none',
-                                   outline: 'none'
-                                 }}
-                                 required
-                               >
-                                 <option value="">Select a delivery address</option>
-                                 {Address?.addresses?.map((addr) => (
-                                   <option key={addr.id} value={addr.id}>
-                                     {addr.addressLine1}, {addr.city}, {addr.state}, {addr.postalCode}
-                                   </option>
-                                 ))}
-                               </select>
-                               <ChevronDown
-                                 size={20}
-                                 style={{
-                                   position: 'absolute',
-                                   right: '12px',
-                                   top: '50%',
-                                   transform: 'translateY(-50%)',
-                                   pointerEvents: 'none',
-                                   color: '#666'
-                                 }}
-                               />
-                             </div>
-                           </div>
+                backgroundColor: 'white',
+                padding: 'clamp(16px, 3vw, 24px)',
+                borderRadius: '8px',
+                boxShadow: '0 2px 8px rgba(0,0,0,0.06)'
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  marginBottom: '20px',
+                  fontSize: 'clamp(16px, 3vw, 18px)',
+                  fontWeight: 600
+                }}>
+
+                  <div className='flex justify-between w-full'>
+                    <div className='flex gap-3 items-center'>
+                      <MapPin size={20} color="#eb2f96" />
+                      <span>Delivery Address</span>
+                    </div>
+                    <Button
+                      onClick={() => router.push("/address")}
+                      variant="outline"
+                      className="w-52  border-pink-600 text-pink-600 rounded-full"
+                    >
+
+                      Add Address
+                    </Button>
+
+                  </div>
+                </div>
+
+                <div style={{ position: 'relative' }}>
+                  <select
+                    value={selectedAddress}
+                    onChange={(e) => setSelectedAddress(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px 40px 12px 16px',
+                      fontSize: 'clamp(14px, 2.5vw, 15px)',
+                      border: '1px solid #d9d9d9',
+                      borderRadius: '6px',
+                      backgroundColor: 'white',
+                      cursor: 'pointer',
+                      appearance: 'none',
+                      outline: 'none'
+                    }}
+                    required
+                  >
+                    <option value="">Select a delivery address</option>
+                    {Address?.addresses?.map((addr) => (
+                      <option key={addr.id} value={addr.id}>
+                        {addr.addressLine1}, {addr.city}, {addr.state}, {addr.postalCode}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown
+                    size={20}
+                    style={{
+                      position: 'absolute',
+                      right: '12px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      pointerEvents: 'none',
+                      color: '#666'
+                    }}
+                  />
+                </div>
+              </div>
 
               {/* Order Items */}
               <div style={{
@@ -313,54 +315,51 @@ export default function CheckoutPage() {
                   fontWeight: 600
                 }}>
                   <ShoppingBag size={20} color="#eb2f96" />
-                  <span>Order Items ({cartdata?.cartItems?.length || 0})</span>
+                  <span>Order Items ({productdata?.product?.length || 1})</span>
                 </div>
 
-                {cartdata?.cartItems?.map((item, index) => (
-                  <div key={item.id}>
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'flex-start',
-                      padding: '12px 0',
-                      gap: '16px',
-                      flexWrap: 'wrap'
-                    }}>
-                      <div style={{ minWidth: '0', flex: '1 1 auto' }}>
-                        <div style={{
-                          fontWeight: 500,
-                          fontSize: 'clamp(14px, 2.5vw, 16px)',
-                          wordBreak: 'break-word'
-                        }}>
-                          {item?.Product?.name}
-                        </div>
-                        <div style={{
-                          color: '#666',
-                          fontSize: 'clamp(12px, 2vw, 14px)'
-                        }}>
-                          Size: {item?.productSize}
-                        </div>
+
+                <div key={productdata?.product?.id}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-start',
+                    padding: '12px 0',
+                    gap: '16px',
+                    flexWrap: 'wrap'
+                  }}>
+                    <div style={{ minWidth: '0', flex: '1 1 auto' }}>
+                      <div style={{
+                        fontWeight: 500,
+                        fontSize: 'clamp(14px, 2.5vw, 16px)',
+                        wordBreak: 'break-word'
+                      }}>
+                        {productdata?.product?.name}
                       </div>
-                      <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                        <div style={{
-                          fontWeight: 600,
-                          fontSize: 'clamp(14px, 2.5vw, 16px)'
-                        }}>
-                          ₹{item?.Product?.price.toLocaleString()}
-                        </div>
-                        <div style={{
-                          color: '#666',
-                          fontSize: 'clamp(12px, 2vw, 14px)'
-                        }}>
-                          ₹{item?.Product?.price.toLocaleString()} x {item?.quantity}
-                        </div>
+                      <div style={{
+                        color: '#666',
+                        fontSize: 'clamp(12px, 2vw, 14px)'
+                      }}>
+                        Size: {buyNowSize}
                       </div>
                     </div>
-                    {index < cartdata?.cartItems?.length - 1 && (
-                      <div style={{ borderBottom: '1px solid #f0f0f0', margin: '8px 0' }} />
-                    )}
+                    <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                      <div style={{
+                        fontWeight: 600,
+                        fontSize: 'clamp(14px, 2.5vw, 16px)'
+                      }}>
+                        ₹{productdata?.product?.price.toLocaleString()}
+                      </div>
+                      <div style={{
+                        color: '#666',
+                        fontSize: 'clamp(12px, 2vw, 14px)'
+                      }}>
+                        ₹{productdata?.product?.price.toLocaleString()} x {productdata?.quantity || 1}
+                      </div>
+                    </div>
                   </div>
-                ))}
+                </div>
+
               </div>
 
               {/* Payment Method */}
@@ -537,5 +536,6 @@ export default function CheckoutPage() {
         </div>
       </div>
     </div>
+
   );
 }
