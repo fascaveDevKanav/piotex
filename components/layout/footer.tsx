@@ -1,8 +1,8 @@
 import Link from "next/link"
 import { ShoppingBag, Mail, Phone, MapPin, Facebook, Twitter, Instagram, Youtube } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-
+import Image from "next/image";
+import logo from "@/public/logo.png";
 export function Footer() {
   return (
     <footer className="bg-gray-900 text-white">
@@ -12,10 +12,10 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div>
-            <div className="flex items-center mb-4">
-              <ShoppingBag className="h-8 w-8 text-pink-500" />
-              <span className="ml-2 text-xl font-bold">Ladies Wear</span>
-            </div>
+             <Link href="" className="flex items-center">
+            <Image src={logo} alt="Adller" className="h-10 w-auto" />
+            <span className=" text-xl font-bold text-white">Adller</span>
+          </Link>
             <p className="text-gray-400 mb-4">
               Your one-stop destination for elegant and trendy ladies fashion. Discover the latest styles in sarees,
               kurtis, dresses, and accessories.
