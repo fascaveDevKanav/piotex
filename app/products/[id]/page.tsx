@@ -35,7 +35,7 @@ export default function ProductDetailsPage() {
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
-  const { productdata } = useSelector((state: any) => state?.reduxData?.data)
+  const { productdata,reviewload } = useSelector((state: any) => state?.reduxData?.data)
   const [sizeerror, setSizeerror] = useState<string | null>("")
   console.log('selected Size ', selectedSize)
 
@@ -124,8 +124,9 @@ export default function ProductDetailsPage() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchReviews()
+      dispatch(reduxSliceData({key:"reviewload", data:false}))
     }
-  }, [isAuthenticated])
+  }, [isAuthenticated,reviewload])
   const fetchReviews = async () => {
     console.log("fetch review for product id:", id)
     await getListData(dispatch, "productReviews", `${endpoints?.products?.getAllReviews}/${id}`)

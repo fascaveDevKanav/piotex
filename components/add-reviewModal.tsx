@@ -18,7 +18,9 @@ import { PlusOutlined, CloseOutlined } from '@ant-design/icons';
 import type { UploadFile, UploadProps } from 'antd';
 import { addData } from '@/lib/customfetch/customFetch';
 import endpoints from '@/lib/endpoints/endponts';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useParams } from 'next/navigation';
+import { reduxSliceData } from '@/redux/features/reduxData';
 
 const { TextArea } = Input;
 
@@ -43,39 +45,61 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
 
   const [fileList, setFileList] = useState<UploadFile[]>([]);
   const [form] = Form.useForm();
-  const {productReviews}= useSelector((state:any)=> state?.reduxData?.data)
+  const params = useParams();
+  const dispatch = useDispatch();
+  const [loader,setLoader]= useState(false)
+
+
   const handleSubmit = async () => {
- 
 
-    if (rating === 0) {
-      message.error('Please select a rating');
-      return;
-    }
+    try {
+      setLoader(true)
 
-    if (!comment.trim()) {
-      message.error('Please write a review');
-      return;
-    }
+      if (rating === 0) {
+        message.error('Please select a rating');
+        return;
+      }
 
-    
+      if (!comment.trim()) {
+        message.error('Please write a review');
+        return;
+      }
 
-
-    const formdata = new FormData();
-    formdata.append('rating', rating.toFixed(1));
-    formdata.append('comment', comment);
-    formdata.append('productId', productReviews?.reviews?.[0]?.productId);
-    fileList.forEach(
+      const formdata = new FormData();
+      formdata.append('rating', rating.toFixed(1));
+      formdata.append('comment', comment);
+      formdata.append('productId', params?.id);
+      fileList.forEach(
         (file) =>
           file.originFileObj &&
           formdata.append("images", file.originFileObj as File)
       );
-     await addData(endpoints?.products?.createreview, formdata, true)
-    // Reset form
-    setRating(0);
-    setComment('');
+      const response = await addData(endpoints?.products?.createreview, formdata, true)
+      if (response?.success) {
+        setRating(0);
+        setComment('');
 
-    setFileList([]);
-    form.resetFields();
+        setFileList([]);
+        form.resetFields();
+        message.success('Review submitted successfully');
+        dispatch(reduxSliceData({key:"reviewload", data:true}))
+        onCancel();
+        setLoader(false)
+      }
+      else {
+        message.error(response?.message || 'Failed to submit review');
+        setLoader(false)
+      }
+    } catch (error) {
+      setLoader(false)
+      error instanceof Error ? message.error(error.message) : message.error('An unexpected error occurred');
+
+    }
+
+    // Reset form
+
+
+
   };
 
   const handleCancel = () => {
@@ -92,7 +116,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
   };
 
   const uploadButton = (
-    <div className="flex flex-col items-center justify-center p-4">
+    <div className="flex flex-col items-center justify-center py-10">
       <PlusOutlined className="text-pink-400 text-2xl mb-2" />
       <div className="text-pink-600 font-medium text-sm">Upload Image</div>
       <div className="text-gray-500 text-xs mt-1">Up to 3 images</div>
@@ -106,13 +130,13 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
         message.error('You can only upload image files!');
         return false;
       }
-      
+
       const isLt5M = file.size / 1024 / 1024 < 5;
       if (!isLt5M) {
         message.error('Image must be smaller than 5MB!');
         return false;
       }
-      
+
       return false; // Prevent auto upload
     },
     fileList,
@@ -129,7 +153,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
     <Modal
       title={
         <div className="text-pink-600 text-xl font-bold text-center">
-          ✨ Write a Review
+          Write a Review
         </div>
       }
       open={visible}
@@ -185,6 +209,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
             className="border-pink-200 focus:border-pink-500 hover:border-pink-300 rounded-lg resize-none"
             maxLength={500}
             showCount
+            typeof='text'
           />
         </Form.Item>
 
@@ -192,11 +217,12 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
         <Form.Item
           label={<span className="text-gray-700 font-medium">Add Photos (Optional)</span>}
         >
-          <div className="space-y-3">
-            <Upload {...uploadProps}>
+          <div className="space-y-4">
+            <Upload {...uploadProps} className='p-5' >
+
               {fileList.length >= 3 ? null : uploadButton}
             </Upload>
-            
+
             {/* Preview Images */}
             {fileList.length > 0 && (
               <div className="mt-4">
@@ -247,6 +273,7 @@ const AddReviewModal: React.FC<AddReviewModalProps> = ({
               onClick={handleSubmit}
               size="large"
               className="h-12 px-8 bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 border-none rounded-lg font-medium shadow-lg shadow-pink-200"
+              loading={loader}
             >
               Submit Review
             </Button>

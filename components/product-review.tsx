@@ -2,7 +2,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { Button, Rate, Image, Avatar, List, Comment } from 'antd';
+import { Button, Rate, Image, Avatar, List, } from 'antd';
 import { StarFilled, UserOutlined } from '@ant-design/icons';
 import AddReviewModal from './add-reviewModal';
 import { useSelector } from 'react-redux';
