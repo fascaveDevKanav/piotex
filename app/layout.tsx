@@ -9,13 +9,12 @@ import { Suspense } from "react"
 import "./globals.css"
 import { ProductProvider } from "@/hooks/usedata-product"
 import Providers from "@/redux/provider"
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
+import LayoutWrapper from "./layoutWrapper"
 
 export const metadata: Metadata = {
-  title: "Ladies Wear - Fashion E-commerce",
+  title: "Adller - Fashion E-commerce for ladies.",
   description: "Discover the latest trends in women's fashion",
-  generator: "v0.app",
+
 }
 
 export default function RootLayout({
@@ -27,21 +26,21 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Suspense fallback={<div>Loading...</div>}>
-        <Providers>
-       <AuthProvider>
+          <Providers>
+            <AuthProvider>
 
-            <ProductProvider>
-            <CartProvider>
-              <Header/>
-              {children}
-              <Footer/>
-              </CartProvider>
+              <ProductProvider>
+                <CartProvider>
+                  <LayoutWrapper>
+                    {children}
+                  </LayoutWrapper>
+                </CartProvider>
               </ProductProvider>
-              
-              
-          </AuthProvider>
-        </Providers>
-       
+
+
+            </AuthProvider>
+          </Providers>
+
         </Suspense>
         <Analytics />
       </body>
