@@ -14,6 +14,7 @@ import { Loader2, Mail, Lock, User, Phone } from "lucide-react"
 import { signup } from "@/lib/auth"
 import { useAuth } from "@/hooks/use-auth"
 import { OtpModal } from "@/components/authModal"
+import { message } from "antd"
 
 export default function SignupPage() {
   const [name, setName] = useState("")
@@ -44,9 +45,11 @@ export default function SignupPage() {
       return
     }
       const result = await signup(name, email, password, number)
+      console.log("Signup result:", result)
        if(result.success){
         // make true the otp verification model
         setIsOtpModalVisible(true);
+        message.success(result.message || "Signup successful! Please verify your email.")
        }else{
         console.log(result ,"result")
         setError(result.message || "Signup failed");

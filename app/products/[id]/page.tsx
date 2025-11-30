@@ -3,7 +3,7 @@
 import { use, useEffect, useState } from "react"
 import { useParams, useRouter } from "next/navigation"
 import Image from "next/image"
-import { ShoppingCart, Share2, CreditCard } from "lucide-react"
+import { ShoppingCart, Share2, CreditCard, MessageCircleX } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 // Swiper imports
@@ -35,7 +35,7 @@ export default function ProductDetailsPage() {
   const [thumbsSwiper, setThumbsSwiper] = useState<any>(null)
 
   const [selectedSize, setSelectedSize] = useState<string | null>(null)
-  const { productdata,reviewload } = useSelector((state: any) => state?.reduxData?.data)
+  const { productdata, reviewload } = useSelector((state: any) => state?.reduxData?.data)
   const [sizeerror, setSizeerror] = useState<string | null>("")
   console.log('selected Size ', selectedSize)
 
@@ -124,13 +124,17 @@ export default function ProductDetailsPage() {
   useEffect(() => {
     if (isAuthenticated) {
       fetchReviews()
-      dispatch(reduxSliceData({key:"reviewload", data:false}))
+      dispatch(reduxSliceData({ key: "reviewload", data: false }))
     }
-  }, [isAuthenticated,reviewload])
+  }, [isAuthenticated, reviewload])
   const fetchReviews = async () => {
     console.log("fetch review for product id:", id)
     await getListData(dispatch, "productReviews", `${endpoints?.products?.getAllReviews}/${id}`)
   }
+
+  const openWhatsApp = () => {
+    window.open(`https://wa.me/${process.env.NEXT_PUBLIC_WHATSAPP_NUMBER}?text=I'm%20interested%20in%20the%20product:%20${productdata?.product?.name}`, "_blank");
+  };
 
 
 
@@ -240,39 +244,6 @@ export default function ProductDetailsPage() {
                 </div>
               )}
 
-
-
-
-
-
-
-              {/* Colors */}
-              {/* {productdata?.product?.ProductColors?.length > 0 && (
-                <div>
-                  <h3 className="text-sm font-semibold mb-2">Select Color</h3>
-                  <div className="flex gap-3 flex-wrap">
-                  {productdata?.product?.ProductColors.map((color : any) => {
-      const value = color.hex?.toLowerCase() || color.color?.toLowerCase()
-
-    return (
-     <button
-      key={color.id}
-      onClick={() => setSelectedColor(color.id)}
-      className={`w-8 h-8 rounded-full border-2 transition-all ${
-        selectedColor === color.id
-          ? "border-pink-600 scale-110"
-          : "border-gray-300"
-      }`}
-      style={{ backgroundColor: value }}
-      title={value} // shows the name/hex on hover
-    />
-  )
-})} */}
-              {/* 
-                  </div>
-                </div>
-              )} */}
-
               {/* Action Buttons */}
               <div className="flex flex-col sm:flex-row gap-4">
                 <Button
@@ -290,6 +261,14 @@ export default function ProductDetailsPage() {
                 >
                   <CreditCard className="h-5 w-5 mr-2" />
                   Buy Now
+                </Button>
+                <Button
+                  onClick={openWhatsApp}
+                  variant="outline"
+                  className="w-full sm:flex-1 border-pink-600 text-pink-600 rounded-full"
+                >
+                  <MessageCircleX className="h-5 w-5 mr-2" />
+                  Chat On Whatsaap
                 </Button>
 
               </div>

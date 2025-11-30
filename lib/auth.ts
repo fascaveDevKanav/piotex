@@ -1,3 +1,4 @@
+import { message } from "antd"
 import api from "./api/api"
 import { errorResponse, setAuthToken } from "./common/common"
 import endpoints from "./endpoints/endponts"
@@ -87,9 +88,9 @@ try {
    const response = await api.post(endpoints.auth.signup,{name,email,password,number})
    console.log("Signup response:", response);
 
-   if(response.status === 201){
+   if(response.status === 201 || response.status === 200){
     saveEmail(email)
-    return {success: true};
+    return {success: true,message:response?.data?.message};
    }else{
       const message = errorResponse(response);
       console.error("Signup failed:", message);

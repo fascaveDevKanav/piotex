@@ -1,7 +1,5 @@
 "use client"
 
-import { Header } from "@/components/layout/header"
-import { Footer } from "@/components/layout/footer"
 import { OrderHistory } from "@/components/profile/order-history"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
@@ -15,7 +13,6 @@ export default function OrdersPage() {
   if (!isAuthenticated) {
     return (
       <div className="min-h-screen bg-gray-50">
-        <Header />
         <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <Card className="text-center">
             <CardContent className="p-8">
@@ -34,7 +31,6 @@ export default function OrdersPage() {
             </CardContent>
           </Card>
         </main>
-        <Footer />
       </div>
     )
   }
